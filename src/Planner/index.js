@@ -1,14 +1,10 @@
 import React from 'react'
-
-if (process.env.NODE_ENV !== 'production') {
-  console.log(process.env)
-}
+import Event from '../Event'
 
 export default function App() {
   return (
     <div className="App">
-      <header className="App-header">
-      </header>
+      <Event />
     </div>
   )
 }
