@@ -1,4 +1,9 @@
 import React, { useState } from 'react'
+import { newEvent } from './models'
+import Debug from 'debug'
+const debug = Debug('Event:index:log')
+
+
 // import {
 //   Time,
 //   Date,
@@ -11,44 +16,66 @@ import React, { useState } from 'react'
 //   Notes
 // } from '../components/fields'
 
-export function Field({ input, textarea, label, name, onChange }) {
+export function Field({ input, textarea, label, name, setter }) {
   const inputProps = Object.assign({
     value: ''
   }, input)
-  const [value, setValue] = useState(inputProps.value)
   const Input = `${textarea ? 'textarea' : 'input'}`
 
   return (
     <div className="field">
       <label htmlFor={name}>{label}</label>
-      <Input id={name} name={name} {...inputProps} value={value} onChange={onChange ? e => {
-        onChange(value, setValue, e)
-        e.preventDefault()
-      } : e => {
-        setValue(e.target.value)
+      <Input id={name} name={name} {...inputProps} onChange={e => {
+        setter(e.target.value)
         e.preventDefault()
       }}></Input>
     </div >
   )
 }
 
-export function NewEvent({ event: { title, description } }) {
+export function NewEvent({ event, setCurrentEvent }) {
+  const [title, setTitle] = useState(event.title)
+  const [description, setDescription] = useState(event.description)
+
   return (
     <div className='new'>
-      {Field({ name: 'title', label: 'Event', input: { type: 'text', placeholder: title, value: 'test val' } })}
-      {Field({ name: 'description', label: 'Description', textarea: true, input: { placeholder: description } })}
+      <form onSubmit={
+        e => {
+          setCurrentEvent(newEvent(Object.assign(event, {
+            title,
+            description
+          })))
+          e.preventDefault()
+        }
+      }>
+        {Field({
+          name: 'title',
+          label: 'Event',
+          input: { type: 'text', placeholder: 'Untitled Event', value: title },
+          setter: setTitle
+        })}
+        {Field({
+          name: 'description',
+          label: 'Description',
+          textarea: true,
+          input: { placeholder: 'Indescribable', value: description },
+          setter: setDescription
+        })}
+        <input type="submit" value="Submit"></input>
+      </form>
+      {/* <EventActions /> */}
     </div>
   )
 }
 
-const newEvent = { title: 'Untitled Event', description: 'Indescribable so far' }
+export default function Event(props) {
+  const [currentEvent, setCurrentEvent] = useState(newEvent(Object.assign({ id: -1 }, props.event)))
 
-export default function Event({ initialValue = newEvent }) {
-  const [event, setEvent] = useState(initialValue)
+  debug({ currentEvent })
 
   return (
     <div className='event'>
-      <NewEvent event={event} setEvent={setEvent} />
+      {(currentEvent.id < 0) && <NewEvent event={currentEvent} setCurrentEvent={setCurrentEvent} />}
     </div>
   )
 }
