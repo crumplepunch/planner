@@ -3,6 +3,7 @@ import debug from 'debug'
 
 const log = debug('Project:general')
 const statelog = debug('Project:state')
+const Button = ({ label, onClick = e => { e.preventDefault() } }) => <button type='button' onClick={onClick}>{label}</button>
 
 export default ({ name, description, _id }) => {
   const [expanded, setExpand] = useState(false)
@@ -24,10 +25,9 @@ export default ({ name, description, _id }) => {
   }}>
     <h1>{name}</h1>
     {expanded && <h3>{description}</h3>}
-    <div className="buttons">
-      <button type='button' onClick={e => {
-        e.preventDefault()
-      }}>Edit</button>
-    </div>
+    {expanded && <div className="buttons">
+      <Button label='Edit Project'></Button>
+      <Button label='View Project'></Button>
+    </div>}
   </div >
 }
