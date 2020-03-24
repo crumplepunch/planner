@@ -1,12 +1,43 @@
 .projects {
+  > h1 {
+    margin-bottom: 40px;
+    text-align: center;
+  }
   .project {
     padding: 20px;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     cursor: pointer;
     user-select: none;
-    button {
-      cursor: pointer;
+    box-sizing: border-box;
+    .buttons {
+      margin-top: 20px;
+      justify-content: flex-end;
+      button {
+        margin: 0 10px;
+      }
     }
   }
+}
+
+@media only screen and (min-width: 768px) {
+  /* tablets and desktop */
+}
+
+@media only screen and (max-width: 767px) {
+  /* phones */
+  .projects {
+    .project {
+      .buttons {
+        justify-content: space-evenly;
+        button {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 767px) and (orientation: portrait) {
+  /* portrait phones */
 }

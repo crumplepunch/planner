@@ -3,6 +3,12 @@ import debug from 'debug'
 
 const log = debug('Project:general')
 const statelog = debug('Project:state')
+const Header = ({ name, description, expanded }) => {
+  return <div className='header flex-column'>
+    <h1>{name}</h1>
+    {expanded && <h3>{description}</h3>}
+  </div>
+}
 const Button = ({ label, onClick = e => { e.preventDefault() } }) => <button type='button' onClick={onClick}>{label}</button>
 
 export default ({ name, description, _id }) => {
@@ -23,9 +29,8 @@ export default ({ name, description, _id }) => {
     }
 
   }}>
-    <h1>{name}</h1>
-    {expanded && <h3>{description}</h3>}
-    {expanded && <div className="buttons">
+    <Header name={name} description={description} expanded={expanded}></Header>
+    {expanded && <div className="buttons container">
       <Button label='Edit Project'></Button>
       <Button label='View Project'></Button>
     </div>}

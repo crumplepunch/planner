@@ -27,7 +27,7 @@ const Projects = props => {
   const { projects } = data
 
   return <div className='projects container flex-column'>
-    <h1>Projects:</h1>
+    <h1 className='max-width justify-center'>Projects</h1>
     {projects.map((project) => <Project key={project._id} {...project}></Project>)}
   </div>
 }
