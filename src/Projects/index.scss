@@ -1,0 +1,8 @@
+.projects {
+  .project {
+    &:hover {
+      cursor: pointer;
+      user-select: none;
+    }
+  }
+}
