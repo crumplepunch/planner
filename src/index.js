@@ -4,7 +4,7 @@ import Planner from './Planner'
 import Projects from './Projects'
 import * as serviceWorker from './serviceWorker'
 
-import './index.css'
+import './index.scss'
 
 
 ReactDOM.render(<Projects />, document.getElementById('planner'))
