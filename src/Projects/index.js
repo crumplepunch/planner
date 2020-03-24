@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useApollo } from '../components/hoc'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
@@ -6,23 +6,11 @@ import { GET_PROJECTS } from './apollo/queries'
 import debug from 'debug'
 
 import './index.scss'
-const log = debug('Projects:general')
-const statelog = debug('Projects:state')
-const Project = ({ name, description, _id }) => {
-  const [expanded, setExpand] = useState(false)
-  statelog({
-    expanded
-  })
+import Project from './Project'
 
-  return <div className='project' id={_id} onClick={e => {
-    e.preventDefault()
-    log(e.currentTarget.id)
-    setExpand(!expanded)
-  }}>
-    <h1>{name}</h1>
-    {expanded && <h3>{description}</h3>}
-  </div>
-}
+
+const log = debug('Projects:general')
+// const statelog = debug('Projects:state')
 
 const Projects = props => {
   const { data, loading, error } = useQuery(GET_PROJECTS)
@@ -38,7 +26,7 @@ const Projects = props => {
 
   const { projects } = data
 
-  return <div className='projects'>
+  return <div className='projects container flex-column'>
     <h1>Projects:</h1>
     {projects.map((project) => <Project key={project._id} {...project}></Project>)}
   </div>

@@ -1,9 +1,9 @@
 .projects {
   .project {
-    margin: 20px;
-    &:hover {
-      cursor: pointer;
-      user-select: none;
-    }
+    padding: 20px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    user-select: none;
   }
 }
