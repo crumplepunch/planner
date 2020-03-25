@@ -9,30 +9,37 @@ const Header = ({ name, description, expanded }) => {
     {expanded && <h3>{description}</h3>}
   </div>
 }
-const Button = ({ label, onClick = e => { e.preventDefault() } }) => <button type='button' onClick={onClick}>{label}</button>
 
-export default ({ name, description, _id }) => {
-  const [expanded, setExpand] = useState(false)
-  statelog({
-    expanded
-  })
 
-  return <div className='project container flex-column' id={_id} onClick={e => {
-    e.preventDefault()
-    log({
-      currentTarget: e.currentTarget.id,
-      target: e.target,
-      type: e.target.type
-    })
-    if (e.target.type !== 'button') {
-      setExpand(!expanded)
+export default ({ name, description, _id, setFocus, isFocused }) => {
+  const [showMenu, setMenu] = useState(false)
+
+  const focusStyle = {
+    color: isFocused ? '#fff' : 'inherit'
+  }
+
+  const focus = (e, preventDefault = false) => {
+    if (preventDefault) {
+      e.preventDefault()
     }
 
-  }}>
-    <Header name={name} description={description} expanded={expanded}></Header>
-    {expanded && <div className="buttons container">
-      <Button label='Edit Project'></Button>
-      <Button label='View Project'></Button>
-    </div>}
+    setFocus(_id)
+  }
+
+
+  const props = {
+    style: focusStyle,
+    id: _id,
+    onClick: e => {
+      focus(e, true)
+      statelog(JSON.stringify({
+        showMenu
+      }))
+    },
+    onContextMenu: e => e.target.type !== 'button' && !isFocused ? focus(e) : setMenu(!showMenu)
+  }
+
+  return <div className='project container flex-column' {...props}>
+    <Header name={name} description={description} expanded={isFocused}></Header>
   </div >
 }

@@ -17,8 +17,9 @@ const Nav = () => <nav>
     <Link to='/planner'>Planner</Link>
   </div>
 </nav>
+
 const Routes = () => <Router>
-  <div className='container'>
+  <div className='container flex-column window-height'>
     <Nav />
     <Switch>
       <Route path='/projects'><Projects /></Route>

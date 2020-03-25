@@ -5,21 +5,22 @@
   }
   .project {
     padding: 20px;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    // border-top: 1px solid black;
+    // border-bottom: 1px solid black;
     cursor: pointer;
     user-select: none;
     box-sizing: border-box;
-    .buttons {
-      margin-top: 20px;
-      justify-content: flex-end;
-      button {
-        margin: 0 10px;
-      }
-    }
+  }
+  .button {
+    margin: 0 10px;
+    min-width: 40px;
+    text-align: center;
   }
 }
 
+.footer {
+  height: 40px;
+}
 @media only screen and (min-width: 768px) {
   /* tablets and desktop */
 }
@@ -30,7 +31,7 @@
     .project {
       .buttons {
         justify-content: space-evenly;
-        button {
+        div {
           margin: 0;
         }
       }
