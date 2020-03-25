@@ -6,9 +6,7 @@ import debug from 'debug'
 const log = debug('Projects:apollo:log')
 
 const cache = new InMemoryCache()
-const link = new HttpLink({
-  uri: 'http://localhost:4000'
-})
+const link = new HttpLink({ uri: 'http://mbp.local:4000' })
 
 export const client = new ApolloClient({
   cache,
