@@ -81,7 +81,10 @@ const Projects = props => {
     <div className='flex-column max-flex-room'>
       {projects.map((project) => <Project {...project}
         key={project._id}
-        setFocus={e => setFocus(project._id)}
+        setFocus={e => {
+          setFocus(project._id)
+          setHover(project._id)
+        }}
         isFocused={project._id === focusedId}
         isHovered={project._id === hoveredId}
         {...project} />
