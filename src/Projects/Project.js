@@ -11,22 +11,21 @@ const Header = ({ name, description, expanded }) => {
 }
 
 
-export default ({ name, description, _id, setFocus, isFocused, isHovered }) => {
+export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) => {
   const [showMenu, setMenu] = useState(false)
-
-  const focusStyle = {
-    color: isFocused ? '#fff' : 'inherit'
-  }
-
   const props = {
-    style: focusStyle,
+    style: {
+      color: isFocused ? '#fff' : 'inherit'
+    },
     className: `project container flex-column hover-text ${isHovered ? 'hovered' : ''}`,
-    id: _id,
-    onClick: setFocus,
-    onContextMenu: e => e.target.type !== 'button' && !isFocused ? setFocus(e) : setMenu(!showMenu)
+    id: _id
   }
 
-  return <div {...props}>
-    <span><Header name={name} description={description} expanded={isFocused}></Header></span>
+  return <div {...props} {...mouseOptions}>
+    <span>{
+      _id
+        ? <Header name={name} description={description} expanded={isFocused} />
+        : <Header name={'+'} description={'Create a new project'} expanded={isFocused} />
+    }</span>
   </div >
 }
