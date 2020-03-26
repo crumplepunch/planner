@@ -39,7 +39,7 @@ export default ({ name, description, _id, setFocus, isFocused }) => {
     onContextMenu: e => e.target.type !== 'button' && !isFocused ? focus(e) : setMenu(!showMenu)
   }
 
-  return <div className='project container flex-column' {...props}>
-    <Header name={name} description={description} expanded={isFocused}></Header>
+  return <div className={`project container flex-column hover-text ${isFocused ? 'hovered' : ''}`} {...props}>
+    <span><Header name={name} description={description} expanded={isFocused}></Header></span>
   </div >
 }

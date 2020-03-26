@@ -56,10 +56,6 @@ const Projects = props => {
     }
   }
 
-  const setEdit = actionFn('edit')
-  const setView = actionFn('view')
-  const setPrev = actionFn('prev')
-  const setNext = actionFn('next')
   const setNone = actionFn('')
   const previousProject = e => {
     const index = projects.map(project => project._id).indexOf(focusedId)
@@ -107,12 +103,12 @@ const Projects = props => {
     {
       <div className="max-width container justify-space-between footer">
         <div className="container">
-          <Action label='View' focus={setView} unfocus={setNone} isFocused={action === 'view'}></Action>
-          <Action label='Edit' focus={setEdit} unfocus={setNone} isFocused={action === 'edit'}></Action>
+          <Action label='View' focus={actionFn('view')} unfocus={setNone} isFocused={action === 'view'}></Action>
+          <Action label='Edit' focus={actionFn('edit')} unfocus={setNone} isFocused={action === 'edit'}></Action>
         </div>
         <div className="container">
-          <Action label='▲' focus={setPrev} unfocus={setNone} isFocused={action === 'up'} />
-          <Action label='▼' focus={setNext} unfocus={setNone} isFocused={action === 'down'} />
+          <Action label='▲' focus={actionFn('prev')} unfocus={setNone} isFocused={action === 'prev'} />
+          <Action label='▼' focus={actionFn('next')} unfocus={setNone} isFocused={action === 'next'} />
         </div>
       </div>
     }
