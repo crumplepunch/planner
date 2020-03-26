@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useApollo } from '../components/hoc'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
@@ -33,6 +33,7 @@ const Action = ({ isFocused, focus, unfocus, label, onClick = e => { e.preventDe
 const Projects = props => {
   const { data, loading, error } = useQuery(GET_PROJECTS)
   const [focusedId, setFocus] = useState(null)
+  const [hoveredId, setHover] = useState(null)
   const [action, setAction] = useState('')
 
   log({
@@ -41,14 +42,42 @@ const Projects = props => {
     error
   })
 
-  if (loading) return <h1>Loading</h1>
-  if (error) return <h1> error</h1>
-  if (!data) return <h1> 404 Not found</h1>
 
-  const { projects } = data
-  if (!focusedId) {
-    setFocus(projects[0]._id)
+  const hoverPrev = _ => {
+    const index = projects.map(project => project._id).indexOf(hoveredId)
+    console.log({ index })
+    if (index <= 0) return
+    setHover(projects[index - 1]._id)
   }
+  const hoverNext = _ => {
+    const index = projects.map(project => project._id).indexOf(hoveredId)
+    if (!(index < (projects.length - 1))) return
+    setHover(projects[index + 1]._id)
+  }
+
+  const vimKeyDown = ({ key }) => {
+    if (key === 'j') return hoverNext()
+    if (key === 'k') return hoverPrev()
+    if (key === 'Enter') return document.getElementById(hoveredId).classList.add('active')
+  }
+
+  const vimKeyUp = ({ key }) => {
+    if (key === 'Enter') {
+      document.getElementById(hoveredId).classList.remove('active')
+      setFocus(hoveredId)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', vimKeyDown)
+    window.addEventListener('keyup', vimKeyUp)
+    // Remove event listeners on cleanup
+    return () => {
+      window.removeEventListener('keydown', vimKeyDown)
+      window.removeEventListener('keyup', vimKeyUp)
+
+    }
+  }, [vimKeyDown, vimKeyUp])
 
   const actionFn = action => {
     return e => {
@@ -57,13 +86,26 @@ const Projects = props => {
   }
 
   const setNone = actionFn('')
-  const previousProject = e => {
+
+  if (loading) return <h1>Loading</h1>
+  if (error) return <h1> error</h1>
+  if (!data) return <h1> 404 Not found</h1>
+
+  const { projects } = data
+
+  if (!focusedId) {
+    setFocus(projects[0]._id)
+  }
+  if (!hoveredId) {
+    setHover(projects[0]._id)
+  }
+
+  const previousProject = _ => {
     const index = projects.map(project => project._id).indexOf(focusedId)
-    console.log(index)
     if (index <= 0) return
     setFocus(projects[index - 1]._id)
   }
-  const nextProject = e => {
+  const nextProject = _ => {
     const index = projects.map(project => project._id).indexOf(focusedId)
     if (!(index < (projects.length - 1))) return
     setFocus(projects[index + 1]._id)
@@ -95,6 +137,7 @@ const Projects = props => {
             setFocus(project._id)
           },
           isFocused: project._id === focusedId,
+          isHovered: project._id === hoveredId
         }
 
         return <Project {...props} {...project} />
