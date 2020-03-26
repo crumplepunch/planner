@@ -20,17 +20,17 @@ const Projects = props => {
 
   log({ data, loading, error })
 
-  const { projects } = data || []
+  const projects = data && data.projects ? data.projects : []
 
   useEffect(() => {
     const hoverPrev = _ => {
       const index = projects.map(project => project._id).indexOf(hoveredId)
-      if (index <= 0) return
+      if (index <= 0) return setHover(projects[projects.length - 1]._id)
       setHover(projects[index - 1]._id)
     }
     const hoverNext = _ => {
       const index = projects.map(project => project._id).indexOf(hoveredId)
-      if (!(index < (projects.length - 1))) return
+      if (!(index < (projects.length - 1))) return setHover(projects[0]._id)
       setHover(projects[index + 1]._id)
     }
     const vimKeyDown = ({ key }) => {
@@ -39,8 +39,9 @@ const Projects = props => {
       if (key === 'Enter') return document.getElementById(hoveredId).classList.add('active')
     }
     const vimKeyUp = ({ key }) => {
+      document.getElementById(hoveredId).classList.remove('active')
+
       if (key === 'Enter') {
-        document.getElementById(hoveredId).classList.remove('active')
         setFocus(hoveredId)
       }
     }
@@ -85,20 +86,48 @@ const Projects = props => {
           setFocus(project._id)
           setHover(project._id)
         }}
+        mouseOptions={{
+          onClick: e => {
+            setFocus(project._id)
+            setHover(project._id)
+
+          },
+          onMouseDown: e => {
+            e = e || window.event
+            e.preventDefault()
+            console.log(e)
+            console.log(`mouse: ${e.which}`)
+          },
+          onContextMenu: e => {
+            e.preventDefault()
+          }
+        }}
         isFocused={project._id === focusedId}
         isHovered={project._id === hoveredId}
-        {...project} />
+      />
       )}
     </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
-        <Action label='View' focus={_ => setAction('view')} unfocus={setNone} isFocused={action === 'view'}></Action>
-        <Action label='Edit' focus={_ => setAction('edit')} unfocus={setNone} isFocused={action === 'edit'}></Action>
+        {Action({
+          label: 'View',
+          isFocused: action === 'view',
+          mouseOptions: {
+            onMouseEnter: _ => setAction('view'),
+            onMouseLeave: _ => setNone
+          }
+        })}
+        {Action({
+          label: 'Edit',
+          isFocused: action === 'edit',
+          mouseOptions: {
+            onMouseEnter: _ => setAction('edit'),
+            onMouseLeave: _ => setNone
+          }
+        })}
+
       </div>
-      <div className="container">
-        <Action label='▲' focus={_ => setAction('prev')} unfocus={setNone} isFocused={action === 'prev'} />
-        <Action label='▼' focus={_ => setAction('next')} unfocus={setNone} isFocused={action === 'next'} />
-      </div>
+
     </div>
   </div >
 }
