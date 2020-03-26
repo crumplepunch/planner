@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useApollo } from '../components/hoc'
+import { Action } from '../components'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
 import { GET_PROJECTS } from './apollo/queries'
@@ -8,18 +9,8 @@ import debug from 'debug'
 import './index.scss'
 import Project from './Project'
 
-
 const log = debug('Projects:general')
 const statelog = debug('Projects:state')
-
-const Action = ({ isFocused, focus, unfocus, label, onClick = e => { e.preventDefault() } }) => <div
-  className='button'
-  type='button'
-  onMouseEnter={focus}
-  onMouseLeave={unfocus}
-  onClick={onClick}
-  style={{ color: isFocused ? '#fff' : 'inherit' }}
->{label}</div>
 
 const Projects = props => {
   const { data, loading, error } = useQuery(GET_PROJECTS)
@@ -63,12 +54,10 @@ const Projects = props => {
     }
   }, [hoveredId, projects])
 
-
-
-
   if (loading) return <h1>Loading</h1>
   if (error) return <h1> error</h1>
   if (!data) return <h1> 404 Not found</h1>
+
   if (!focusedId) setFocus(projects[0]._id)
   if (!hoveredId) setHover(projects[0]._id)
 
@@ -85,47 +74,29 @@ const Projects = props => {
     }
   }
 
-
   const setNone = _ => setAction('')
 
-  return <div className='projects container flex-column flex-grow' onClick={e => {
-    statelog({
-      currentProject: projects[projects.map(({ _id }) => _id).indexOf(focusedId)],
-      currentAction: action
-    })
-    action && actions[action]()
-  }}>
+  return <div className='projects container flex-column flex-grow' onClick={e => { action && actions[action]() }}>
     <h1 className='max-width justify-center'>Projects</h1>
     <div className='flex-column max-flex-room'>
-      {projects.map((project) => {
-        const props = {
-          key: project._id,
-          setFocus: e => {
-            statelog({
-              focusedId,
-              project
-            })
-            setFocus(project._id)
-          },
-          isFocused: project._id === focusedId,
-          isHovered: project._id === hoveredId
-        }
-
-        return <Project {...props} {...project} />
-      })}
+      {projects.map((project) => <Project {...project}
+        key={project._id}
+        setFocus={e => setFocus(project._id)}
+        isFocused={project._id === focusedId}
+        isHovered={project._id === hoveredId}
+        {...project} />
+      )}
     </div>
-    {
-      <div className="max-width container justify-space-between footer">
-        <div className="container">
-          <Action label='View' focus={_ => setAction('view')} unfocus={setNone} isFocused={action === 'view'}></Action>
-          <Action label='Edit' focus={_ => setAction('edit')} unfocus={setNone} isFocused={action === 'edit'}></Action>
-        </div>
-        <div className="container">
-          <Action label='▲' focus={_ => setAction('prev')} unfocus={setNone} isFocused={action === 'prev'} />
-          <Action label='▼' focus={_ => setAction('next')} unfocus={setNone} isFocused={action === 'next'} />
-        </div>
+    <div className="max-width container justify-space-between footer">
+      <div className="container">
+        <Action label='View' focus={_ => setAction('view')} unfocus={setNone} isFocused={action === 'view'}></Action>
+        <Action label='Edit' focus={_ => setAction('edit')} unfocus={setNone} isFocused={action === 'edit'}></Action>
       </div>
-    }
+      <div className="container">
+        <Action label='▲' focus={_ => setAction('prev')} unfocus={setNone} isFocused={action === 'prev'} />
+        <Action label='▼' focus={_ => setAction('next')} unfocus={setNone} isFocused={action === 'next'} />
+      </div>
+    </div>
   </div >
 }
 

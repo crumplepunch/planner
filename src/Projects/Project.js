@@ -18,28 +18,15 @@ export default ({ name, description, _id, setFocus, isFocused, isHovered }) => {
     color: isFocused ? '#fff' : 'inherit'
   }
 
-  const focus = (e, preventDefault = false) => {
-    if (preventDefault) {
-      e.preventDefault()
-    }
-
-    setFocus(_id)
-  }
-
-
   const props = {
     style: focusStyle,
+    className: `project container flex-column hover-text ${isHovered ? 'hovered' : ''}`,
     id: _id,
-    onClick: e => {
-      focus(e, true)
-      statelog(JSON.stringify({
-        showMenu
-      }))
-    },
-    onContextMenu: e => e.target.type !== 'button' && !isFocused ? focus(e) : setMenu(!showMenu)
+    onClick: setFocus,
+    onContextMenu: e => e.target.type !== 'button' && !isFocused ? setFocus(e) : setMenu(!showMenu)
   }
 
-  return <div className={`project container flex-column hover-text ${isHovered ? 'hovered' : ''}`} {...props}>
+  return <div {...props}>
     <span><Header name={name} description={description} expanded={isFocused}></Header></span>
   </div >
 }
