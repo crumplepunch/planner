@@ -23,6 +23,10 @@ const Projects = props => {
   const [hoveredId, setHover] = useState(null)
   const [action, setAction] = useState('')
 
+  const setListItem = arg => {
+    return setFocus(arg)
+  }
+
   log({ data, loading, error })
 
   const projects = data && data.projects ? data.projects : []
@@ -48,7 +52,7 @@ const Projects = props => {
         document.getElementById(hoveredId).classList.remove('active')
 
         if (key === 'Enter') {
-          setFocus(hoveredId)
+          setListItem(hoveredId)
         }
       }
 
@@ -66,19 +70,19 @@ const Projects = props => {
   if (error) return <h1> error</h1>
   if (!data) return <h1> 404 Not found</h1>
 
-  if (!focusedId) setFocus(projects[0]._id)
+  if (!focusedId) setListItem(projects[0]._id)
   if (!hoveredId) setHover(projects[0]._id)
 
   const actions = {
     prev: _ => {
       const index = projects.map(project => project._id).indexOf(focusedId)
       if (index <= 0) return
-      setFocus(projects[index + 1]._id)
+      setListItem(projects[index + 1]._id)
     },
     next: _ => {
       const index = projects.map(project => project._id).indexOf(focusedId)
       if (!(index < (projects.length - 1))) return
-      setFocus(projects[index + 1]._id)
+      setListItem(projects[index + 1]._id)
     }
   }
 
@@ -89,13 +93,13 @@ const Projects = props => {
     <div className='flex-column max-flex-room'>
       {projects.map((project) => <Project {...project}
         key={project._id}
-        setFocus={e => {
-          setFocus(project._id)
+        setListItem={e => {
+          setListItem(project._id)
           setHover(project._id)
         }}
         mouseOptions={{
           onClick: e => {
-            setFocus(project._id)
+            setListItem(project._id)
             setHover(project._id)
 
           },
@@ -132,7 +136,6 @@ const Projects = props => {
             onMouseLeave: _ => setNone
           }
         })}
-
       </div>
 
     </div>
