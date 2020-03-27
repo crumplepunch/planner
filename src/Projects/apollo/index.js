@@ -12,9 +12,3 @@ export const client = new ApolloClient({
   cache,
   link
 })
-
-export async function GetProjects() {
-  return client.query({
-    query: GET_PROJECTS
-  }).then(result => log(result))
-}

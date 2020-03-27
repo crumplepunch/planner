@@ -13,7 +13,12 @@ const log = debug('Projects:general')
 const statelog = debug('Projects:state')
 
 const Projects = props => {
-  const { data, loading, error } = useQuery(GET_PROJECTS)
+  const { data, loading, error } = useQuery(GET_PROJECTS, {
+    variables: {
+      sortField: 'name',
+      direction: 1
+    }
+  })
   const [focusedId, setFocus] = useState(null)
   const [hoveredId, setHover] = useState(null)
   const [action, setAction] = useState('')
@@ -23,35 +28,37 @@ const Projects = props => {
   const projects = data && data.projects ? data.projects : []
 
   useEffect(() => {
-    const hoverPrev = _ => {
-      const index = projects.map(project => project._id).indexOf(hoveredId)
-      if (index <= 0) return setHover(projects[projects.length - 1]._id)
-      setHover(projects[index - 1]._id)
-    }
-    const hoverNext = _ => {
-      const index = projects.map(project => project._id).indexOf(hoveredId)
-      if (!(index < (projects.length - 1))) return setHover(projects[0]._id)
-      setHover(projects[index + 1]._id)
-    }
-    const vimKeyDown = ({ key }) => {
-      if (key === 'j') return hoverNext()
-      if (key === 'k') return hoverPrev()
-      if (key === 'Enter') return document.getElementById(hoveredId).classList.add('active')
-    }
-    const vimKeyUp = ({ key }) => {
-      document.getElementById(hoveredId).classList.remove('active')
-
-      if (key === 'Enter') {
-        setFocus(hoveredId)
+    if (projects.length) {
+      const hoverPrev = _ => {
+        const index = projects.map(project => project._id).indexOf(hoveredId)
+        if (index <= 0) return setHover(projects[projects.length - 1]._id)
+        setHover(projects[index - 1]._id)
       }
-    }
+      const hoverNext = _ => {
+        const index = projects.map(project => project._id).indexOf(hoveredId)
+        if (!(index < (projects.length - 1))) return setHover(projects[0]._id)
+        setHover(projects[index + 1]._id)
+      }
+      const vimKeyDown = ({ key }) => {
+        if (key === 'j') return hoverNext()
+        if (key === 'k') return hoverPrev()
+        if (key === 'Enter') return document.getElementById(hoveredId).classList.add('active')
+      }
+      const vimKeyUp = ({ key }) => {
+        document.getElementById(hoveredId).classList.remove('active')
 
-    window.addEventListener('keydown', vimKeyDown)
-    window.addEventListener('keyup', vimKeyUp)
-    // Remove event listeners on cleanup
-    return () => {
-      window.removeEventListener('keydown', vimKeyDown)
-      window.removeEventListener('keyup', vimKeyUp)
+        if (key === 'Enter') {
+          setFocus(hoveredId)
+        }
+      }
+
+      window.addEventListener('keydown', vimKeyDown)
+      window.addEventListener('keyup', vimKeyUp)
+      // Remove event listeners on cleanup
+      return () => {
+        window.removeEventListener('keydown', vimKeyDown)
+        window.removeEventListener('keyup', vimKeyUp)
+      }
     }
   }, [hoveredId, projects])
 
