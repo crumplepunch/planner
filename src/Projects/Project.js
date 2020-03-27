@@ -24,7 +24,7 @@ export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) 
   return <div {...props} {...mouseOptions}>
     <span>{
       _id
-        ? <Header name={name} description={description} expanded={isFocused} />
+        ? <Header name={name} description={description} expanded={isFocused || isHovered} />
         : <Header name={'+'} description={'Create a new project'} expanded={isFocused} />
     }</span>
   </div >

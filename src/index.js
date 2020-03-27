@@ -22,6 +22,7 @@ const Routes = () => <Router>
   <div className='container flex-column window-height'>
     <Nav />
     <Switch>
+      <Route path='/projects/:id'><Projects /></Route>'
       <Route path='/projects'><Projects /></Route>
       <Route path='/planner'><Planner /></Route>
     </Switch>

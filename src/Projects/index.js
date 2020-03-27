@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link, Switch, Route, useHistory, useLocation, useParams } from 'react-router-dom'
 import { useApollo } from '../components/hoc'
 import { Action } from '../components'
 import { useQuery } from '@apollo/react-hooks'
@@ -13,23 +14,35 @@ const log = debug('Projects:general')
 const statelog = debug('Projects:state')
 
 const Projects = props => {
+  const location = useLocation()
+  const params = useParams()
+  const history = useHistory()
   const { data, loading, error } = useQuery(GET_PROJECTS, {
     variables: {
       sortField: 'name',
       direction: 1
     }
   })
+
   const [focusedId, setFocus] = useState(null)
   const [hoveredId, setHover] = useState(null)
   const [action, setAction] = useState('')
 
   const setListItem = arg => {
+    // history.push('/1234')
     return setFocus(arg)
   }
 
   log({ data, loading, error })
+  statelog({ params })
 
   const projects = data && data.projects ? data.projects : []
+  const view = overrideId => {
+    log({ location, params })
+    const index = projects.map(project => project._id).indexOf(overrideId || hoveredId)
+
+    history.push(`/projects/${projects[index].name.toLowerCase().replace(/ /g, '-')}`)
+  }
 
   useEffect(() => {
     if (projects.length) {
@@ -53,6 +66,7 @@ const Projects = props => {
 
         if (key === 'Enter') {
           setListItem(hoveredId)
+          view(hoveredId)
         }
       }
 
@@ -70,8 +84,11 @@ const Projects = props => {
   if (error) return <h1> error</h1>
   if (!data) return <h1> 404 Not found</h1>
 
-  if (!focusedId) setListItem(projects[0]._id)
-  if (!hoveredId) setHover(projects[0]._id)
+  if (projects.length) {
+    const id = params.id ? projects[projects.map(project => project.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))]._id : 0
+    if (!hoveredId) setHover(id)
+    if (!focusedId) setListItem(id)
+  }
 
   const actions = {
     prev: _ => {
@@ -83,7 +100,8 @@ const Projects = props => {
       const index = projects.map(project => project._id).indexOf(focusedId)
       if (!(index < (projects.length - 1))) return
       setListItem(projects[index + 1]._id)
-    }
+    },
+    view
   }
 
   const setNone = _ => setAction('')
@@ -101,13 +119,7 @@ const Projects = props => {
           onClick: e => {
             setListItem(project._id)
             setHover(project._id)
-
-          },
-          onMouseDown: e => {
-            e = e || window.event
-            e.preventDefault()
-            console.log(e)
-            console.log(`mouse: ${e.which}`)
+            view(project._id)
           },
           onContextMenu: e => {
             e.preventDefault()
@@ -121,7 +133,7 @@ const Projects = props => {
     <div className="max-width container justify-space-between footer">
       <div className="container">
         {Action({
-          label: 'View',
+          label: '(V)iew',
           isFocused: action === 'view',
           mouseOptions: {
             onMouseEnter: _ => setAction('view'),
@@ -129,15 +141,18 @@ const Projects = props => {
           }
         })}
         {Action({
-          label: 'Edit',
+          label: '(E)dit',
           isFocused: action === 'edit',
           mouseOptions: {
             onMouseEnter: _ => setAction('edit'),
             onMouseLeave: _ => setNone
           }
         })}
+        <Switch>
+          <Route path="/:id">
+          </Route>
+        </Switch>
       </div>
-
     </div>
   </div >
 }
