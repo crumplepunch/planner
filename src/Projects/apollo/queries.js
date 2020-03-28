@@ -8,9 +8,17 @@ query ($sortField: String, $direction: Int) {
     plans {
       research {
         tasks
+        cost {
+          time
+          money
+        }
       }
       build {
         tasks
+        cost {
+          time
+          money
+        }
       }
     }
   }

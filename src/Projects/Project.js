@@ -10,6 +10,24 @@ const Header = ({ name, description, expanded }) => {
   </div>
 }
 
+export const ProjectDescription = ({ _id, description }) => {
+  return <div>
+    <h1>Description</h1>
+    <p>{description}</p>
+  </div>
+}
+
+export const ProjectLog = ({ _id }) => {
+  return <span />
+}
+
+export const Info = ({ project }) => {
+  const { name, _id, description, tasks } = project
+
+  return <div className='listInfo container flex-column'>
+    <code>{description}</code>
+  </div>
+}
 
 export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) => {
   const [showMenu, setMenu] = useState(false)

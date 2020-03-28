@@ -8,7 +8,7 @@ import { GET_PROJECTS } from './apollo/queries'
 import debug from 'debug'
 
 import './index.scss'
-import Project from './Project'
+import ProjectListItem, { Info } from './Project'
 
 const log = debug('Projects:general')
 const statelog = debug('Projects:state')
@@ -23,25 +23,27 @@ const Projects = props => {
       direction: 1
     }
   })
-
+  const [currentProject, setCurrentProject] = useState(null)
   const [focusedId, setFocus] = useState(null)
   const [hoveredId, setHover] = useState(null)
   const [action, setAction] = useState('')
 
   const setListItem = arg => {
     // history.push('/1234')
+    setCurrentProject(projects.find(project => project._id === arg))
+
     return setFocus(arg)
   }
 
   log({ data, loading, error })
-  statelog({ params })
+  statelog({ currentProject })
 
   const projects = data && data.projects ? data.projects : []
   const view = overrideId => {
     log({ location, params })
     const index = projects.map(project => project._id).indexOf(overrideId || hoveredId)
 
-    history.push(`/projects/${projects[index].name.toLowerCase().replace(/ /g, '-')}`)
+    history.push(`/projects/${projects.find(({ _id }) => _id === (overrideId || hoveredId)).name.toLowerCase().replace(/ /g, '-')}`)
   }
 
   useEffect(() => {
@@ -110,7 +112,7 @@ const Projects = props => {
     <h1 className='max-width justify-center'>Projects</h1>
     <div className='max-flex-room container'>
       <div className='max-flex-room'>
-        {projects.map((project) => <Project {...project}
+        {projects.map((project) => <ProjectListItem {...project}
           key={project._id}
           setListItem={e => {
             setListItem(project._id)
@@ -132,17 +134,30 @@ const Projects = props => {
         )}
       </div>
       <div>
-        <h1>Hellos</h1>
+        <h1> ?</h1>
+        <Switch>
+          <Route path="/:id">
+            {currentProject && <Info project={currentProject} />}
+          </Route>
+        </Switch>
       </div>
     </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
         {Action({
+          label: '(A)dd',
+          isFocused: action === 'add',
+          mouseOptions: {
+            onMouseEnter: _ => setAction('add'),
+            onMouseLeave: _ => setNone()
+          }
+        })}
+        {Action({
           label: '(V)iew',
           isFocused: action === 'view',
           mouseOptions: {
             onMouseEnter: _ => setAction('view'),
-            onMouseLeave: _ => setNone
+            onMouseLeave: _ => setNone()
           }
         })}
         {Action({
@@ -150,13 +165,10 @@ const Projects = props => {
           isFocused: action === 'edit',
           mouseOptions: {
             onMouseEnter: _ => setAction('edit'),
-            onMouseLeave: _ => setNone
+            onMouseLeave: _ => setNone()
           }
         })}
-        <Switch>
-          <Route path="/:id">
-          </Route>
-        </Switch>
+
       </div>
     </div>
   </div >
