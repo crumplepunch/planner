@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Action } from '../components'
 import debug from 'debug'
 
 const log = debug('Project:general')
@@ -23,9 +24,24 @@ export const ProjectLog = ({ _id }) => {
 
 export const Info = ({ project }) => {
   const { name, _id, description, tasks } = project
+  const [clickType, setClickType] = useState('')
+  const [mode, setMode] = useState('r')
 
-  return <div className='listInfo container flex-column'>
+
+  return <div className='listInfo container flex-column' onClick={e => e.preventDefault()}>
     <code>{description}</code>
+    {Action({
+      label: 'Edit',
+      isFocused: clickType === 'edit',
+      mouseOptions: {
+        onMouseEnter: e => {
+          setClickType('edit')
+        },
+        onMouseLeave: e => {
+          setClickType('')
+        }
+      }
+    })}
   </div>
 }
 

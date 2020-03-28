@@ -89,7 +89,7 @@ const Projects = props => {
   if (projects.length) {
     const id = params.id ? projects[projects.map(project => project.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))]._id : projects[0]._id
     if (!hoveredId) setHover(id)
-    if (!focusedId) setListItem(id)
+    if (!focusedId) setFocus(id)
   }
 
   const actions = {
@@ -134,7 +134,6 @@ const Projects = props => {
         )}
       </div>
       <div>
-        <h1> ?</h1>
         <Switch>
           <Route path="/:id">
             {currentProject && <Info project={currentProject} />}
