@@ -4,15 +4,13 @@ query ($sortField: String, $direction: Int) {
   projects(sortField: $sortField, direction: $direction) {
     _id
     name
-    description
-    design{
-      lead
-    }
-    development {
-      lead
-      stack
-      completions {
-        message
+    description 
+    plans {
+      research {
+        tasks
+      }
+      build {
+        tasks
       }
     }
   }

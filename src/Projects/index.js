@@ -85,7 +85,7 @@ const Projects = props => {
   if (!data) return <h1> 404 Not found</h1>
 
   if (projects.length) {
-    const id = params.id ? projects[projects.map(project => project.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))]._id : 0
+    const id = params.id ? projects[projects.map(project => project.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))]._id : projects[0]._id
     if (!hoveredId) setHover(id)
     if (!focusedId) setListItem(id)
   }
@@ -108,27 +108,32 @@ const Projects = props => {
 
   return <div className='projects container flex-column flex-grow' onClick={e => { action && actions[action]() }}>
     <h1 className='max-width justify-center'>Projects</h1>
-    <div className='flex-column max-flex-room'>
-      {projects.map((project) => <Project {...project}
-        key={project._id}
-        setListItem={e => {
-          setListItem(project._id)
-          setHover(project._id)
-        }}
-        mouseOptions={{
-          onClick: e => {
+    <div className='max-flex-room container'>
+      <div className='max-flex-room'>
+        {projects.map((project) => <Project {...project}
+          key={project._id}
+          setListItem={e => {
             setListItem(project._id)
             setHover(project._id)
-            view(project._id)
-          },
-          onContextMenu: e => {
-            e.preventDefault()
-          }
-        }}
-        isFocused={project._id === focusedId}
-        isHovered={project._id === hoveredId}
-      />
-      )}
+          }}
+          mouseOptions={{
+            onClick: e => {
+              setListItem(project._id)
+              setHover(project._id)
+              view(project._id)
+            },
+            onContextMenu: e => {
+              e.preventDefault()
+            }
+          }}
+          isFocused={project._id === focusedId}
+          isHovered={project._id === hoveredId}
+        />
+        )}
+      </div>
+      <div>
+        <h1>Hellos</h1>
+      </div>
     </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
