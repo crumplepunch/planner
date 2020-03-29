@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, Switch, Route, useHistory, useLocation, useParams } from 'react-router-dom'
 import { useApollo } from '../components/hoc'
-import { Action } from '../components'
+import { Action, Error } from '../components'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
 import { GET_PROJECTS } from './apollo/queries'
@@ -29,7 +29,6 @@ const Projects = props => {
   const [action, setAction] = useState('')
 
   const setListItem = arg => {
-    // history.push('/1234')
     setCurrentProject(projects.find(project => project._id === arg))
 
     return setFocus(arg)
@@ -83,7 +82,7 @@ const Projects = props => {
   }, [hoveredId, projects])
 
   if (loading) return <h1>Loading</h1>
-  if (error) return <h1> error</h1>
+  if (error) return <Error error={error} />
   if (!data) return <h1> 404 Not found</h1>
 
   if (projects.length) {

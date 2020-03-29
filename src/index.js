@@ -20,7 +20,7 @@ const Nav = () => <nav>
 
 const Routes = () => <Router>
   <div className='container flex-column window-height'>
-    <Nav />
+    {/* <Nav /> */}
     <Switch>
       <Route path='/projects/:id'><Projects /></Route>'
       <Route path='/projects'><Projects /></Route>
