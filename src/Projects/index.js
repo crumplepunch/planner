@@ -102,7 +102,10 @@ const Projects = props => {
       if (!(index < (projects.length - 1))) return
       setListItem(projects[index + 1]._id)
     },
-    view
+    view,
+    add: _ => {
+      history.push('/projects/new')
+    }
   }
 
   const setNone = _ => setAction('')
@@ -137,9 +140,13 @@ const Projects = props => {
           <Route path="/:id">
             {currentProject && <Info project={currentProject} />}
           </Route>
+          <Route path='/new'>
+            {}
+          </Route>
+          </Route>
         </Switch>
-      </div>
     </div>
+  </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
         {Action({
