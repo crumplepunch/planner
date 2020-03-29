@@ -143,10 +143,10 @@ const Projects = props => {
           <Route path='/new'>
             {}
           </Route>
-          </Route>
+
         </Switch>
+      </div>
     </div>
-  </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
         {Action({

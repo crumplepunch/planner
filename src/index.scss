@@ -96,6 +96,15 @@ $hover-height: 8px;
 .justify-center {
   justify-content: center;
 }
+.justify-left {
+  justify-content: flex-start;
+}
+.align-left {
+  align-content: flex-start;
+}
+.no-select {
+  user-select: none;
+}
 .buttons,
 .button {
   user-select: none;
