@@ -1,3 +1,3 @@
-# Topological Planner
+# Idea Keeper
 
 ![](readme-assets/hover-click.gif)
