@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export const Action = ({
   label,
@@ -6,14 +6,22 @@ export const Action = ({
   mouseOptions = {},
   clickOptions = {},
   touchOptions = {}
-}) => <div
-  className='button container hover-text'
-  type='button'
-  {...clickOptions}
-  {...mouseOptions}
-  {...touchOptions}
-  style={{ color: isFocused ? '#fff' : 'inherit' }}
-> <span>{label}</span></div >
+}) => {
+  const { onMouseLeave } = mouseOptions
+
+  useEffect(() => {
+    return () => onMouseLeave && onMouseLeave()
+  }, [])
+
+  return <div
+    className='button container hover-text'
+    type='button'
+    {...clickOptions}
+    {...mouseOptions}
+    {...touchOptions}
+    style={{ color: isFocused ? '#fff' : 'inherit' }}
+  > <span>{label}</span></div >
+}
 
 const Excuses = [
   `There's been some kind of mixup.`,

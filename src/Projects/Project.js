@@ -21,27 +21,34 @@ export const ProjectDescription = ({ _id, description }) => {
 export const ProjectLog = ({ _id }) => {
   return <span />
 }
+export const NewProjectLog = ({ _id }) => {
+  const [active, setActive] = useState(false)
 
+  const newEntryAction = {
+    mouseOptions: {
+      onClick: e => {
+        setActive('true')
+      }
+    }
+  }
+
+  return <div className={`container toolbar align-right flex-column ${active ? 'max-height' : ''}`}>
+    <Action label='New Entry' {...newEntryAction} />
+  </div>
+}
 export const Info = ({ project }) => {
-  const { name, _id, description, tasks } = project
-  const [clickType, setClickType] = useState('')
+  const { name, _id, description, tasks, updated } = project
   const [mode, setMode] = useState('r')
 
 
-  return <div className='listInfo container flex-column' onClick={e => e.preventDefault()}>
-    <code>{description}</code>
-    {Action({
-      label: 'Edit',
-      isFocused: clickType === 'edit',
-      mouseOptions: {
-        onMouseEnter: e => {
-          setClickType('edit')
-        },
-        onMouseLeave: e => {
-          setClickType('')
-        }
-      }
-    })}
+  return <div className='listInfo container flex-column max-height half-width padding' onClick={e => e.preventDefault()}>
+    <header className='container flex-row max-flex-room justify-space-between'>
+      <code>{name}</code>
+      <code>{updated || `April 20, 2020`}</code>
+    </header>
+
+    <NewProjectLog />
+
   </div>
 }
 

@@ -12,6 +12,7 @@ import ProjectListItem, { Info } from './Project'
 
 const log = debug('Projects:general')
 const statelog = debug('Projects:state')
+const keylog = debug('Projects:keylog')
 
 const Projects = props => {
   const location = useLocation()
@@ -29,7 +30,11 @@ const Projects = props => {
   const [action, setAction] = useState('')
 
   const setListItem = arg => {
-    setCurrentProject(projects.find(project => project._id === arg))
+    if (!arg) {
+      return setCurrentProject(null)
+    }
+
+    setCurrentProject(projects.find(({ _id }) => _id === arg))
 
     return setFocus(arg)
   }
@@ -39,9 +44,6 @@ const Projects = props => {
 
   const projects = data && data.projects ? data.projects : []
   const view = overrideId => {
-    log({ location, params })
-    const index = projects.map(project => project._id).indexOf(overrideId || hoveredId)
-
     history.push(`/projects/${projects.find(({ _id }) => _id === (overrideId || hoveredId)).name.toLowerCase().replace(/ /g, '-')}`)
   }
 
@@ -58,6 +60,7 @@ const Projects = props => {
         setHover(projects[index + 1]._id)
       }
       const vimKeyDown = ({ key }) => {
+        if (key === 'Escape') return setListItem(null)
         if (key === 'j') return hoverNext()
         if (key === 'k') return hoverPrev()
         if (key === 'Enter') return document.getElementById(hoveredId).classList.add('active')
@@ -105,21 +108,20 @@ const Projects = props => {
     view,
     add: _ => {
       history.push('/projects/new')
-    }
+    },
+    esc: _ => {
+      setListItem(null)
+    },
   }
 
-  const setNone = _ => setAction('')
-
-  return <div className='projects container flex-column flex-grow' onClick={e => { action && actions[action]() }}>
-    <h1 className='max-width justify-center'>Projects</h1>
-    <div className='max-flex-room container'>
-      <div className='max-flex-room'>
+  return <div className='projects container flex-column flex-grow' onClick={e => {
+    action && actions[action]()
+  }}>
+    <h1 className='max-width justify-center'>Blackboard</h1>
+    <div className='max-flex-room flex-row container'>
+      <div className='flex-column padding max-flex-room'>
         {projects.map((project) => <ProjectListItem {...project}
           key={project._id}
-          setListItem={e => {
-            setListItem(project._id)
-            setHover(project._id)
-          }}
           mouseOptions={{
             onClick: e => {
               setListItem(project._id)
@@ -149,31 +151,10 @@ const Projects = props => {
     </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
-        {Action({
-          label: '(A)dd',
-          isFocused: action === 'add',
-          mouseOptions: {
-            onMouseEnter: _ => setAction('add'),
-            onMouseLeave: _ => setNone()
-          }
-        })}
-        {Action({
-          label: '(V)iew',
-          isFocused: action === 'view',
-          mouseOptions: {
-            onMouseEnter: _ => setAction('view'),
-            onMouseLeave: _ => setNone()
-          }
-        })}
-        {Action({
-          label: '(E)dit',
-          isFocused: action === 'edit',
-          mouseOptions: {
-            onMouseEnter: _ => setAction('edit'),
-            onMouseLeave: _ => setNone()
-          }
-        })}
-
+        <Action label='(A)dd' isFocused={action === 'add'} mouseOptions={{ onMouseEnter: _ => setAction('add'), onMouseLeave: _ => setAction('') }} />
+        <Action label='(V)iew' isFocused={action === 'view'} mouseOptions={{ onMouseEnter: _ => setAction('view'), onMouseLeave: _ => setAction('') }} />
+        <Action label='(E)dit' isFocused={action === 'edit'} mouseOptions={{ onMouseEnter: _ => setAction('edit'), onMouseLeave: _ => setAction('') }} />
+        {currentProject && <Action label='(Esc)ape' isFocused={action === 'esc'} mouseOptions={{ onMouseEnter: _ => setAction('esc'), onMouseLeave: _ => setAction('') }} />}
       </div>
     </div>
   </div >

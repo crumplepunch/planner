@@ -66,6 +66,9 @@ $hover-height: 8px;
   max-height: 100%;
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+.half-width {
+  width: 50vw;
+}
 .navigation {
   margin-bottom: 20px;
 }
@@ -86,6 +89,10 @@ $hover-height: 8px;
 }
 .max-flex-room {
   flex: 1;
+
+  &.header {
+    width: 100%;
+  }
 }
 .justify-space {
   justify-content: space-evenly;
@@ -99,8 +106,14 @@ $hover-height: 8px;
 .justify-left {
   justify-content: flex-start;
 }
+.justify-right {
+  justify-content: flex-end;
+}
 .align-left {
   align-content: flex-start;
+}
+.align-right {
+  align-items: flex-end;
 }
 .no-select {
   user-select: none;
@@ -110,14 +123,38 @@ $hover-height: 8px;
   user-select: none;
   cursor: pointer;
 }
+.button {
+  min-width: 200px;
+}
+$padding: 20px;
+
+.padding {
+  padding: $padding;
+  &.half-width {
+    width: calc(50vw - 40px);
+  }
+}
 @media only screen and (min-width: 768px) {
   /* tablets and desktop */
 }
 
 @media only screen and (max-width: 767px) {
   /* phones */
+  .half-width {
+    max-width: 80vw;
+  }
 }
 
 @media only screen and (max-width: 767px) and (orientation: portrait) {
   /* portrait phones */
+}
+.toolbar {
+  min-height: 70px;
+  span {
+    line-height: 70px;
+  }
+  max-width: 100%;
+}
+.header {
+  width: 40vw;
 }
