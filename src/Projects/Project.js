@@ -18,12 +18,18 @@ export const ProjectDescription = ({ _id, description }) => {
   </div>
 }
 
-export const ProjectLog = ({ _id }) => {
-  return <span />
+export const ProjectLog = ({ markdown, date, name }) => {
+  return <div className='container flex-column max-flex-room'>
+    <header className='container flex-row justify-space-between'>
+      <code>{name}</code>
+      <code>{date || `April 20, 2020`}</code>
+    </header>
+    <p>{markdown}</p>
+  </div>
 }
+
 export const NewProjectLog = ({ _id }) => {
   const [active, setActive] = useState(false)
-
   const newEntryAction = {
     mouseOptions: {
       onClick: e => {
@@ -36,19 +42,17 @@ export const NewProjectLog = ({ _id }) => {
     <Action label='New Entry' {...newEntryAction} />
   </div>
 }
+
 export const Info = ({ project }) => {
   const { name, _id, description, tasks, updated } = project
   const [mode, setMode] = useState('r')
 
-
   return <div className='listInfo container flex-column max-height half-width padding' onClick={e => e.preventDefault()}>
-    <header className='container flex-row max-flex-room justify-space-between'>
-      <code>{name}</code>
-      <code>{updated || `April 20, 2020`}</code>
-    </header>
+    <div className='container flex-column max-flex-room overflow-scroll-y hide-scroll'>
+      {project.logs.map((log, key) => <ProjectLog key={key} {...log} />)}
+    </div>
 
     <NewProjectLog />
-
   </div>
 }
 

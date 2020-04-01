@@ -5,21 +5,11 @@ query ($sortField: String, $direction: Int) {
     _id
     name
     description 
-    plans {
-      research {
-        tasks
-        cost {
-          time
-          money
-        }
-      }
-      build {
-        tasks
-        cost {
-          time
-          money
-        }
-      }
+    logs {
+      project
+      markdown
+      date
+      name
     }
   }
 }

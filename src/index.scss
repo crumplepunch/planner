@@ -56,7 +56,10 @@ $hover-height: 8px;
     }
   }
 }
-
+.overflow-scroll-y {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
 .container {
   margin: 0;
   padding: 0;
@@ -65,7 +68,16 @@ $hover-height: 8px;
   max-width: 100%;
   max-height: 100%;
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+
+  .hide-scroll {
+    overflow: hidden;
+    > .container {
+      padding-right: 17px; /* Increase/decrease this value for cross-browser compatibility */
+      box-sizing: content-box; /* So the width will be 100% + 17px */
+    }
+  }
 }
+
 .half-width {
   width: 50vw;
 }
@@ -129,11 +141,12 @@ $hover-height: 8px;
 $padding: 20px;
 
 .padding {
-  padding: $padding;
+  margin: $padding;
   &.half-width {
     width: calc(50vw - 40px);
   }
 }
+
 @media only screen and (min-width: 768px) {
   /* tablets and desktop */
 }

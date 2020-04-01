@@ -10,6 +10,7 @@ import {
   Route
 } from 'react-router-dom'
 import './index.scss'
+
 const Nav = () => <nav>
   <div className='container navigation justify-space max-width'>
     <Link to='/'>Home</Link>
@@ -22,7 +23,7 @@ const Routes = () => <Router>
   <div className='container flex-column window-height'>
     {/* <Nav /> */}
     <Switch>
-      <Route path='/projects/:id'><Projects /></Route>'
+      <Route path='/projects/:id'><Projects /></Route>
       <Route path='/projects'><Projects /></Route>
       <Route path='/planner'><Planner /></Route>
     </Switch>
@@ -30,8 +31,4 @@ const Routes = () => <Router>
 </Router>
 
 ReactDOM.render(<Routes />, document.getElementById('planner'))
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()
