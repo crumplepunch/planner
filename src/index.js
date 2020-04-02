@@ -15,7 +15,7 @@ const Nav = () => <nav>
   <div className='container navigation justify-space max-width'>
     <Link to='/'>Home</Link>
     <Link to='/projects'>Projects</Link>
-    <Link to='/planner'>Planner</Link>
+    <Link to='/planner'>Blackboard</Link>
   </div>
 </nav>
 

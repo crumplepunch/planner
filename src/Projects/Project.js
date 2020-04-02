@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Action } from '../components'
+import Log from './Log'
 import debug from 'debug'
 
 const log = debug('Project:general')
@@ -18,14 +19,8 @@ export const ProjectDescription = ({ _id, description }) => {
   </div>
 }
 
-export const ProjectLog = ({ markdown, date, name }) => {
-  return <div className='container flex-column max-flex-room'>
-    <header className='container flex-row justify-space-between'>
-      <code>{name}</code>
-      <code>{date || `April 20, 2020`}</code>
-    </header>
-    <p>{markdown}</p>
-  </div>
+export const ProjectLog = (props) => {
+  return <Log {...props} />
 }
 
 export const NewProjectLog = ({ _id }) => {
@@ -45,11 +40,10 @@ export const NewProjectLog = ({ _id }) => {
 
 export const Info = ({ project }) => {
   const { name, _id, description, tasks, updated } = project
-  const [mode, setMode] = useState('r')
 
   return <div className='listInfo container flex-column max-height half-width padding' onClick={e => e.preventDefault()}>
     <div className='container flex-column max-flex-room overflow-scroll-y hide-scroll'>
-      {project.logs.map((log, key) => <ProjectLog key={key} {...log} />)}
+      {project.logs.length ? project.logs.map((log, key) => <ProjectLog key={key} {...log} />) : <code>No Logs</code>}
     </div>
 
     <NewProjectLog />
