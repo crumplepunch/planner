@@ -25,6 +25,7 @@ const Projects = props => {
     }
   })
   const listRef = useRef()
+  const logsRef = useRef()
   const [currentProject, setCurrentProject] = useState(null)
   const [focusedId, setFocus] = useState(null)
   const [hoveredId, setHover] = useState(null)
@@ -93,7 +94,7 @@ const Projects = props => {
           const keys = {
             Enter: () => {
               document.getElementById(hoveredId).classList.remove('active')
-              setListItem(hoveredId)
+              logsRef.current.focus()
             },
             Control: () => setModifiers(Object.assign(modifiers, {
               ctrl: false
@@ -177,10 +178,12 @@ const Projects = props => {
         />
         )}
       </div>
-      <div tabIndex='0'>
+      <div ref={logsRef} tabIndex='0'>
         <Switch>
+          <Route path='/:id/logs/add'>
+          </Route>
           <Route path="/:id">
-            {currentProject && <Info project={currentProject} />}
+            <Info project={currentProject} />
           </Route>
           <Route path='/new'>
             {}
