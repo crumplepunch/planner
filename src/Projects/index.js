@@ -81,16 +81,17 @@ const Projects = props => {
         ,
         keyup:
           ({ key }) => {
-            document.getElementById(hoveredId).classList.remove('active')
-            if (key === 'Enter') {
-              setListItem(hoveredId)
-              view(hoveredId)
-            }
-            if (key === 'Control') {
-              setModifiers(Object.assign(modifiers, {
+            const keys = {
+              Enter: () => {
+                document.getElementById(hoveredId).classList.remove('active')
+                setListItem(hoveredId)
+                view(hoveredId)
+              },
+              Control: () => setModifiers(Object.assign(modifiers, {
                 ctrl: false
               }))
             }
+            keys[key] && keys[key]()
           }
       }
 
