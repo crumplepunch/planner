@@ -27,6 +27,7 @@ const Projects = props => {
   const [currentProject, setCurrentProject] = useState(null)
   const [focusedId, setFocus] = useState(null)
   const [hoveredId, setHover] = useState(null)
+  const [modifiers, setModifiers] = useState({})
   const [action, setAction] = useState('')
 
   const setListItem = arg => {
@@ -59,30 +60,44 @@ const Projects = props => {
         if (!(index < (projects.length - 1))) return setHover(projects[0]._id)
         setHover(projects[index + 1]._id)
       }
-      const vimKeyDown = ({ key }) => {
-        if (key === 'Escape') return setListItem(null)
-        if (key === 'j') return hoverNext()
-        if (key === 'k') return hoverPrev()
-        if (key === 'Enter') return document.getElementById(hoveredId).classList.add('active')
-      }
-      const vimKeyUp = ({ key }) => {
-        document.getElementById(hoveredId).classList.remove('active')
 
-        if (key === 'Enter') {
-          setListItem(hoveredId)
-          view(hoveredId)
-        }
+
+      const eventListeners = {
+        keydown:
+          ({ key }) => {
+            const keys = {
+              Enter: () => document.getElementById(hoveredId).classList.add('active'),
+              Escape: () => setListItem(null),
+              j: () => hoverNext(),
+              k: () => hoverPrev(),
+
+              //:::: HOTKEYS ::::
+              Control: () => setModifiers(Object.assign(modifiers, {
+                ctrl: true
+              }))
+            }
+            keys[key] && keys[key]()
+          }
+        ,
+        keyup:
+          ({ key }) => {
+            document.getElementById(hoveredId).classList.remove('active')
+            if (key === 'Enter') {
+              setListItem(hoveredId)
+              view(hoveredId)
+            }
+            if (key === 'Control') {
+              setModifiers(Object.assign(modifiers, {
+                ctrl: false
+              }))
+            }
+          }
       }
 
-      window.addEventListener('keydown', vimKeyDown)
-      window.addEventListener('keyup', vimKeyUp)
-      // Remove event listeners on cleanup
-      return () => {
-        window.removeEventListener('keydown', vimKeyDown)
-        window.removeEventListener('keyup', vimKeyUp)
-      }
+      Object.keys(eventListeners).forEach(event => window.addEventListener(event, eventListeners[event]))
+      return () => Object.keys(eventListeners).forEach(event => window.removeEventListener(event, eventListeners[event]))
     }
-  }, [hoveredId, projects])
+  }, [hoveredId, projects, modifiers])
 
   if (loading) return <h1>Loading</h1>
   if (error) return <Error error={error} />
@@ -117,9 +132,9 @@ const Projects = props => {
   return <div className='projects container flex-column flex-grow' onClick={e => {
     action && actions[action]()
   }}>
-    <h1 className='max-width justify-center'>Blackboard</h1>
+    <h1 className='max-width justify-center'>Logs</h1>
     <div className='max-flex-room flex-row container'>
-      <div className='flex-column padding max-flex-room'>
+      {<div className='flex-column padding max-flex-room'>
         {projects.map((project) => <ProjectListItem {...project}
           key={project._id}
           mouseOptions={{
@@ -137,6 +152,7 @@ const Projects = props => {
         />
         )}
       </div>
+      }
       <div>
         <Switch>
           <Route path="/:id">
