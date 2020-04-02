@@ -161,7 +161,7 @@ const Projects = props => {
     action && actions[action]()
   }}>
     <div className='max-flex-room flex-row container' >
-      {<div className='flex-column padding max-flex-room' ref={listRef} tabIndex='0'>
+      <div className='flex-column padding max-flex-room' ref={listRef} tabIndex='0'>
         {projects.map((project) => <ProjectListItem {...project}
           key={project._id}
           mouseOptions={{
@@ -177,8 +177,7 @@ const Projects = props => {
         />
         )}
       </div>
-      }
-      <div>
+      <div tabIndex='0'>
         <Switch>
           <Route path="/:id">
             {currentProject && <Info project={currentProject} />}
@@ -188,8 +187,8 @@ const Projects = props => {
           </Route>
 
         </Switch>
-      </div>
-    </div>
+      </div >
+    </div >
     <div className="max-width container justify-space-between footer">
       <div className="container">
         <Action label='(T)rack' isFocused={action === 'track'} mouseOptions={{ onMouseEnter: _ => setAction('track'), onMouseLeave: _ => setAction('') }} />
