@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, Switch, Route, useHistory, useLocation, useParams } from 'react-router-dom'
 import { useApollo } from '../components/hoc'
 import { Action, Error } from '../components'
@@ -24,6 +24,7 @@ const Projects = props => {
       direction: 1
     }
   })
+  const listRef = useRef()
   const [currentProject, setCurrentProject] = useState(null)
   const [focusedId, setFocus] = useState(null)
   const [hoveredId, setHover] = useState(null)
@@ -48,7 +49,12 @@ const Projects = props => {
     history.push(`/projects/${projects.find(({ _id }) => _id === (overrideId || hoveredId)).name.toLowerCase().replace(/ /g, '-')}`)
   }
 
+  listRef.current && listRef.current.focus()
+
   useEffect(() => {
+    document.getElementById('listref') && document.getElementById('listref').focus()
+    console.log(document.getElementById('listref'))
+
     if (projects.length) {
       const hoverPrev = _ => {
         const index = projects.map(project => project._id).indexOf(hoveredId)
@@ -61,44 +67,55 @@ const Projects = props => {
         setHover(projects[index + 1]._id)
       }
 
+      const listEventListeners = {
+        keydown: ({ key }) => {
+          const keys = {
+            Enter: () => document.getElementById(hoveredId).classList.add('active'),
+            j: () => hoverNext(),
+            k: () => hoverPrev(),
 
-      const eventListeners = {
-        keydown:
-          ({ key }) => {
-            const keys = {
-              Enter: () => document.getElementById(hoveredId).classList.add('active'),
-              Escape: () => setListItem(null),
-              j: () => hoverNext(),
-              k: () => hoverPrev(),
-
-              //:::: HOTKEYS ::::
-              Control: () => setModifiers(Object.assign(modifiers, {
-                ctrl: true
-              }))
-            }
-            keys[key] && keys[key]()
+            //:::: HOTKEYS ::::
+            Control: () => setModifiers(Object.assign(modifiers, {
+              ctrl: true
+            }))
           }
-        ,
-        keyup:
-          ({ key }) => {
-            const keys = {
-              Enter: () => {
-                document.getElementById(hoveredId).classList.remove('active')
-                setListItem(hoveredId)
-                view(hoveredId)
-              },
-              Control: () => setModifiers(Object.assign(modifiers, {
-                ctrl: false
-              }))
-            }
-            keys[key] && keys[key]()
+          keys[key] && keys[key]()
+        },
+        keyup: ({ key }) => {
+          const keys = {
+            Enter: () => {
+              document.getElementById(hoveredId).classList.remove('active')
+              setListItem(hoveredId)
+              view(hoveredId)
+            },
+            Control: () => setModifiers(Object.assign(modifiers, {
+              ctrl: false
+            }))
           }
+          keys[key] && keys[key]()
+        }
+      }
+      const windowEventListeners = {
+        keydown: ({ key }) => {
+          const keys = {
+            Escape: () => listRef.current.focus()
+          }
+          keys[key] && keys[key]()
+        }
       }
 
-      Object.keys(eventListeners).forEach(event => window.addEventListener(event, eventListeners[event]))
-      return () => Object.keys(eventListeners).forEach(event => window.removeEventListener(event, eventListeners[event]))
+      if (listRef.current) {
+        Object.keys(listEventListeners).forEach(event => listRef.current.addEventListener(event, listEventListeners[event]))
+        Object.keys(windowEventListeners).forEach(event => window.addEventListener(event, windowEventListeners[event]))
+
+      }
+
+      return () => {
+        Object.keys(listEventListeners).forEach(event => listRef.current.removeEventListener(event, listEventListeners[event]))
+        Object.keys(windowEventListeners).forEach(event => window.removeEventListener(event, windowEventListeners[event]))
+      }
     }
-  }, [hoveredId, projects, modifiers])
+  }, [hoveredId, projects, modifiers, listRef])
 
   if (loading) return <h1>Loading</h1>
   if (error) return <Error error={error} />
@@ -134,8 +151,8 @@ const Projects = props => {
     action && actions[action]()
   }}>
     <h1 className='max-width justify-center'>Logs</h1>
-    <div className='max-flex-room flex-row container'>
-      {<div className='flex-column padding max-flex-room'>
+    <div className='max-flex-room flex-row container' >
+      {<div className='flex-column padding max-flex-room' ref={listRef} tabIndex='0'>
         {projects.map((project) => <ProjectListItem {...project}
           key={project._id}
           mouseOptions={{
