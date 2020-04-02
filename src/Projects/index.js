@@ -31,24 +31,31 @@ const Projects = props => {
   const [modifiers, setModifiers] = useState({})
   const [action, setAction] = useState('')
 
-  const setListItem = arg => {
+  const setListItem = (arg, push = true) => {
+
     if (!arg) {
       return setCurrentProject(null)
     }
 
-    setCurrentProject(projects.find(({ _id }) => _id === arg))
+    const project = projects.find(({ _id }) => _id === arg)
+    const slug = project.name.toLowerCase().replace(/ /g, '-')
 
-    return setFocus(arg)
+    if (currentProject !== project) {
+      setCurrentProject(project)
+      setHover(project._id)
+      setFocus(project._id)
+    }
+
+    if (document.title !== project.name) {
+      document.title = project.name
+      push && history.push(`/projects/${project.name.toLowerCase().replace(/ /g, '-')}`)
+    }
   }
 
   log({ data, loading, error })
   statelog({ currentProject })
 
   const projects = data && data.projects ? data.projects : []
-  const view = overrideId => {
-    history.push(`/projects/${projects.find(({ _id }) => _id === (overrideId || hoveredId)).name.toLowerCase().replace(/ /g, '-')}`)
-  }
-
   listRef.current && listRef.current.focus()
 
   useEffect(() => {
@@ -58,13 +65,14 @@ const Projects = props => {
     if (projects.length) {
       const hoverPrev = _ => {
         const index = projects.map(project => project._id).indexOf(hoveredId)
-        if (index <= 0) return setHover(projects[projects.length - 1]._id)
-        setHover(projects[index - 1]._id)
+        if (index <= 0) return setListItem(projects[projects.length - 1]._id)
+        setListItem(projects[index - 1]._id)
+
       }
       const hoverNext = _ => {
         const index = projects.map(project => project._id).indexOf(hoveredId)
-        if (!(index < (projects.length - 1))) return setHover(projects[0]._id)
-        setHover(projects[index + 1]._id)
+        if (!(index < (projects.length - 1))) return setListItem(projects[0]._id)
+        setListItem(projects[index + 1]._id)
       }
 
       const listEventListeners = {
@@ -86,7 +94,6 @@ const Projects = props => {
             Enter: () => {
               document.getElementById(hoveredId).classList.remove('active')
               setListItem(hoveredId)
-              view(hoveredId)
             },
             Control: () => setModifiers(Object.assign(modifiers, {
               ctrl: false
@@ -123,8 +130,9 @@ const Projects = props => {
 
   if (projects.length) {
     const id = params.id ? projects[projects.map(project => project.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))]._id : projects[0]._id
-    if (!hoveredId) setHover(id)
-    if (!focusedId) setFocus(id)
+    if (!currentProject || currentProject._id !== id) {
+      setListItem(id, false)
+    }
   }
 
   const actions = {
@@ -138,19 +146,20 @@ const Projects = props => {
       if (!(index < (projects.length - 1))) return
       setListItem(projects[index + 1]._id)
     },
-    view,
     add: _ => {
       history.push('/projects/new')
     },
     esc: _ => {
       setListItem(null)
     },
+    track: _ => {
+      history.push(`/projects/${currentProject.name.toLowerCase().replace(/ /g, '-')}/track`)
+    }
   }
 
   return <div className='projects container flex-column flex-grow' onClick={e => {
     action && actions[action]()
   }}>
-    <h1 className='max-width justify-center'>Logs</h1>
     <div className='max-flex-room flex-row container' >
       {<div className='flex-column padding max-flex-room' ref={listRef} tabIndex='0'>
         {projects.map((project) => <ProjectListItem {...project}
@@ -158,8 +167,6 @@ const Projects = props => {
           mouseOptions={{
             onClick: e => {
               setListItem(project._id)
-              setHover(project._id)
-              view(project._id)
             },
             onContextMenu: e => {
               e.preventDefault()
@@ -185,6 +192,7 @@ const Projects = props => {
     </div>
     <div className="max-width container justify-space-between footer">
       <div className="container">
+        <Action label='(T)rack' isFocused={action === 'track'} mouseOptions={{ onMouseEnter: _ => setAction('track'), onMouseLeave: _ => setAction('') }} />
         <Action label='(A)dd' isFocused={action === 'add'} mouseOptions={{ onMouseEnter: _ => setAction('add'), onMouseLeave: _ => setAction('') }} />
         <Action label='(V)iew' isFocused={action === 'view'} mouseOptions={{ onMouseEnter: _ => setAction('view'), onMouseLeave: _ => setAction('') }} />
         <Action label='(E)dit' isFocused={action === 'edit'} mouseOptions={{ onMouseEnter: _ => setAction('edit'), onMouseLeave: _ => setAction('') }} />
