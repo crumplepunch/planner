@@ -1,19 +1,40 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { useKeyBindings, freeKeyBindings, registerKeyBindings } from '../hooks'
 
 export const Action = ({
   label,
   isFocused,
+  hotkey = '',
   mouseOptions = {},
   clickOptions = {},
   touchOptions = {}
 }) => {
   const { onMouseLeave } = mouseOptions
+  const keyBindingOpts = {}
+  const actionRef = useRef()
 
+  keyBindingOpts[hotkey] = {
+    down: () => {
+      actionRef.current.classList.add('active')
+    },
+    up: () => {
+      actionRef.current.classList.remove('active')
+    }
+  }
+  const actionKeyBindings = useKeyBindings(keyBindingOpts)
+
+
+  useEffect(() => {
+    const current = actionRef.current
+    registerKeyBindings(window)(actionKeyBindings)
+    return () => freeKeyBindings(window)(actionKeyBindings)
+  }, [actionKeyBindings, actionRef])
   useEffect(() => {
     return () => onMouseLeave && onMouseLeave()
   }, [onMouseLeave])
 
   return <div
+    ref={actionRef}
     className='button container hover-text'
     type='button'
     {...clickOptions}

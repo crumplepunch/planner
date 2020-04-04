@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
-import { Action } from '../components'
-import { useList } from '../hocs'
+import React, { useState, useRef } from 'react'
+import { Action, Error } from '../components'
+import { useApollo, useList } from '../hocs'
 import Log from './Log'
+import { useQuery } from '@apollo/react-hooks'
+import { client } from './apollo/index'
+import { GET_PROJECTS } from './apollo/queries'
 // import debug from 'debug'
 
 // const log = debug('Project:general')
@@ -55,7 +58,7 @@ export const ProjectListItem = ({ name, description, _id, mouseOptions, isFocuse
   // const [showMenu, setMenu] = useState(false)
   const props = {
     style: {
-      color: isFocused ? '#fff' : 'inherit'
+      color: isFocused ? '#fff' : '#343434'
     },
     className: `project container flex-column hover-text ${isHovered ? 'hovered' : ''}`,
     id: _id
@@ -70,4 +73,71 @@ export const ProjectListItem = ({ name, description, _id, mouseOptions, isFocuse
   </div >
 }
 
-export const ProjectList = useList(ProjectListItem)
+
+export const ProjectActions = props => {
+  return <div className="container" >
+    <Action label='(Esc)ape' hotkey='Escape' />
+    <Action label='(T)rack' hotkey='t' />
+    <Action label='(A)dd' hotkey='a' />
+    <Action label='(V)iew' hotkey='v' />
+    <Action label='(E)dit' hotkey='e' />
+  </div>
+}
+
+const ProjectAddField = ({ name, _id, placeholder, isHovered, isFocused, mouseOptions }) => {
+  const [value, setValue] = useState('')
+  const props = {
+    style: {
+      color: isFocused ? '#fff' : '#cfcfcf'
+    },
+    className: `project container flex-column hover-text ${isHovered ? 'hovered' : ''}`,
+    id: _id
+  }
+
+  return <div key={_id} {...props} {...mouseOptions}>
+    <label>{name}</label>
+    <input placeholder={placeholder} value={value} onChange={e => { setValue(e.target.value) }} />
+  </div>
+}
+
+const ProjectList = useList(ProjectListItem)
+const ProjectFormFields = useList(ProjectAddField)
+
+const ProjectAdd = props => {
+  const formRef = useRef()
+  const pointerState = useState()
+  const [currentField] = pointerState
+
+  return <div className='container max-flex-room'>
+    <h1>New Project</h1>
+    <form ref={formRef}>
+      <ProjectFormFields {...props} pointerState={pointerState} items={[
+        {
+          name: 'Project Title',
+          placeholder: 'Untitled',
+          _id: ''
+        }
+      ]} />
+    </form>
+  </div>
+}
+
+export default useApollo(client, props => {
+  const { data, loading, error } = useQuery(GET_PROJECTS, {
+    variables: {
+      sortField: 'name',
+      direction: 1
+    }
+  })
+
+  if (loading) return <h1>Loading</h1>
+  if (error) return <Error error={error} />
+  if (!data) return <h1> 404 Not found</h1>
+
+  const projects = data && data.projects ? data.projects : []
+
+  return <div className='container flex-column max-flex-room'>
+    <ProjectList {...props} items={projects} AddListItem={ProjectAdd} />
+    <ProjectActions />
+  </div>
+})
