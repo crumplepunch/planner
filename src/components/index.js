@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 export const Action = ({
   label,
@@ -11,7 +11,7 @@ export const Action = ({
 
   useEffect(() => {
     return () => onMouseLeave && onMouseLeave()
-  }, [])
+  }, [onMouseLeave])
 
   return <div
     className='button container hover-text'
@@ -34,20 +34,12 @@ const Excuses = [
 ]
 
 export const Error = ({ error }) => {
-  const { graphQLErrors, message, networkError } = error
-  const [action, setAction] = useState('')
-  const escActionOptions = {
-    mouseOptions: {
-      onMouseEnter: _ => setAction('esc'),
-      onMouseLeave: _ => setAction('')
-    }
-  }
+  const { message } = error
 
   return <div className='container centered max-height max-width flex-column justify-center'>
     <div className='container max-flex-room flex-column justify-center'>
       <h2 className='no-select'>{Excuses[Math.floor(Math.random() * Excuses.length)]}</h2>
       <code>{message}</code>
     </div>
-    <Action label='(Esc)ape' isFocused={action === 'esc'} />
   </div>
 }

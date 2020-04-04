@@ -5,19 +5,19 @@ import Projects from './Projects'
 import * as serviceWorker from './serviceWorker'
 import {
   BrowserRouter as Router,
-  Link,
+  // Link,
   Switch,
   Route
 } from 'react-router-dom'
 import './index.scss'
 
-const Nav = () => <nav>
-  <div className='container navigation justify-space max-width'>
-    <Link to='/'>Home</Link>
-    <Link to='/projects'>Projects</Link>
-    <Link to='/planner'>Blackboard</Link>
-  </div>
-</nav>
+// const Nav = () => <nav>
+//   <div className='container navigation justify-space max-width'>
+//     <Link to='/'>Home</Link>
+//     <Link to='/projects'>Projects</Link>
+//     <Link to='/planner'>Blackboard</Link>
+//   </div>
+// </nav>
 
 const Routes = () => <Router>
   <div className='container flex-column window-height'>

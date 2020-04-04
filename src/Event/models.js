@@ -2,6 +2,7 @@ import Debug from 'debug'
 const debug = Debug('Event:models:event:log')
 const error = Debug('Event:models:event:error')
 
+debug('loading')
 export function newEvent(options, graph = {}) {
   const event = {}
   if (!options.id) {
@@ -53,3 +54,4 @@ export default class Event {
     this.blockedBy[event.id] = event
   }
 }
+debug('loaded')

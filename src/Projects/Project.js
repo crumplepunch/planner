@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { Action } from '../components'
+import { useList } from '../hocs'
 import Log from './Log'
-import debug from 'debug'
+// import debug from 'debug'
 
-const log = debug('Project:general')
-const statelog = debug('Project:state')
+// const log = debug('Project:general')
+// const statelog = debug('Project:state')
 const Header = ({ name, description, expanded }) => {
   return <div className='header flex-column'>
     <h1>{name}</h1>
@@ -39,7 +40,7 @@ export const NewProjectLog = ({ _id }) => {
 }
 
 export const Info = ({ project }) => {
-  const { name, _id, description, tasks, updated } = project
+  // const { name, _id, description, tasks, updated } = project
 
   return <div className='listInfo container flex-column max-height half-width padding' onClick={e => e.preventDefault()}>
     <div className='container flex-column max-flex-room overflow-scroll-y hide-scroll'>
@@ -50,8 +51,8 @@ export const Info = ({ project }) => {
   </div>
 }
 
-export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) => {
-  const [showMenu, setMenu] = useState(false)
+export const ProjectListItem = ({ name, description, _id, mouseOptions, isFocused, isHovered }) => {
+  // const [showMenu, setMenu] = useState(false)
   const props = {
     style: {
       color: isFocused ? '#fff' : 'inherit'
@@ -68,3 +69,5 @@ export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) 
     }</span>
   </div >
 }
+
+export const ProjectList = useList(ProjectListItem)
