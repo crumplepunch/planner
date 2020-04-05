@@ -1,11 +1,23 @@
-export const registerKeyBindings = target => bindingFns => Object.keys(bindingFns).forEach(eventType => target.addEventListener(eventType, bindingFns[eventType]))
-export const freeKeyBindings = target => bindingFns => Object.keys(bindingFns).forEach(eventType => target.removeEventListener(eventType, bindingFns[eventType]))
+import { useEffect } from 'react'
+const registerKeyBindings = target => bindingFns => target && Object.keys(bindingFns).forEach(eventType => target.addEventListener(eventType, bindingFns[eventType]))
+const freeKeyBindings = target => bindingFns => target && Object.keys(bindingFns).forEach(eventType => target.removeEventListener(eventType, bindingFns[eventType]))
 
-export const useKeyBindings = (keys) => {
+export const useKeyBindings = (keys, target) => {
   const eventListeners = {
     keydown: ({ key }) => ((keys[key] || {}).down || (() => { }))(),
     keyup: ({ key }) => ((keys[key] || {}).up || (() => { }))(),
   }
 
-  return eventListeners
-}
+  useEffect(() => {
+    target && registerKeyBindings(target)(eventListeners)
+
+    return () => {
+      freeKeyBindings(target)(eventListeners)
+    }
+  })
+
+  return [
+    () => { freeKeyBindings(target)(eventListeners) },
+    () => { registerKeyBindings(target)(eventListeners) },
+  ]
+} 

@@ -96,7 +96,9 @@ const ProjectAddField = ({ name, _id, placeholder, isHovered, isFocused, mouseOp
 
   return <div key={_id} {...props} {...mouseOptions}>
     <label>{name}</label>
-    <input placeholder={placeholder} value={value} onChange={e => { setValue(e.target.value) }} />
+    <input placeholder={placeholder} value={value} onChange={e => {
+      setValue(e.target.value)
+    }} />
   </div>
 }
 

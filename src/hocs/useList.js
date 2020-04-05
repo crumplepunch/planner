@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { useKeyBindings, registerKeyBindings, freeKeyBindings } from '../hooks/useKeyBindings'
+import { useKeyBindings } from '../hooks'
 
 
 export function useList(Component) {
   return function List(props) {
-    const { pointerState, items, path, nextRef, options = {}, AddListItem } = props
+    const { pointerState, items, path, nextRef, AddListItem } = props
     const [currentItem, setCurrentItem] = pointerState
     const [modifiers, setModifiers] = useState({})
     const listRef = useRef()
@@ -31,7 +31,7 @@ export function useList(Component) {
       document.tile = `${path} - ${m}`
       setMode(m)
     }
-    const [listBindings, windowBindings] = [useKeyBindings({
+    const [freeListKeys] = useKeyBindings({
       a: {
         down: () => {
           changeMode('add')
@@ -65,29 +65,18 @@ export function useList(Component) {
         down: () => setModifiers(Object.assign(modifiers, { ctrl: true })),
         up: () => setModifiers(Object.assign(modifiers, { ctrl: false }))
       }
-    }), useKeyBindings({
+    }, listRef.current)
+
+    const [freeWindowKeys] = useKeyBindings({
       Escape: {
         down: () => {
           changeMode('list')
           listRef.current.focus()
         }
       }
-    })]
+    }, window)
 
     useEffect(() => {
-      const { current } = listRef
-
-      current && registerKeyBindings(listRef.current)(listBindings)
-      window && registerKeyBindings(window)(windowBindings)
-
-      return () => {
-        freeKeyBindings(current)(listBindings)
-        freeKeyBindings(window)(windowBindings)
-      }
-    }, [items, listRef, currentItem, nextRef, listBindings, windowBindings])
-
-    useEffect(() => {
-
       const item = params.id ? items[items.map(item => item.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))] : items[0]
       if (!currentItem || currentItem !== item) setListItem(item, false)
     })
@@ -101,6 +90,7 @@ export function useList(Component) {
         isHovered={item === currentItem}
         mouseOptions={{
           onClick: e => {
+            debugger
             setListItem(item)
           },
           onContextMenu: e => {

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react'
-import { useKeyBindings, freeKeyBindings, registerKeyBindings } from '../hooks'
+import { useKeyBindings } from '../hooks'
 
 export const Action = ({
   label,
   isFocused,
   hotkey = '',
+  ref = window,
   mouseOptions = {},
   clickOptions = {},
   touchOptions = {}
@@ -21,14 +22,8 @@ export const Action = ({
       actionRef.current.classList.remove('active')
     }
   }
-  const actionKeyBindings = useKeyBindings(keyBindingOpts)
+  const [freeKeyBindings] = useKeyBindings(keyBindingOpts, ref)
 
-
-  useEffect(() => {
-    const current = actionRef.current
-    registerKeyBindings(window)(actionKeyBindings)
-    return () => freeKeyBindings(window)(actionKeyBindings)
-  }, [actionKeyBindings, actionRef])
   useEffect(() => {
     return () => onMouseLeave && onMouseLeave()
   }, [onMouseLeave])
