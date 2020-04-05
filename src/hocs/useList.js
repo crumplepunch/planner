@@ -5,8 +5,9 @@ import { useKeyBindings } from '../hooks'
 
 export function useList(Component) {
   return function List(props) {
-    const { pointerState, items, path, nextRef, AddListItem } = props
+    const { pointerState, items, path, nextRef, AddListItem, options = {} } = props
     const [currentItem, setCurrentItem] = pointerState
+    const { enableAdd = false } = options
     const [modifiers, setModifiers] = useState({})
     const listRef = useRef()
     const history = useHistory()
@@ -15,8 +16,8 @@ export function useList(Component) {
 
     const setListItem = (item, push = true) => {
       if (item) {
-        setCurrentItem(item)
         push && path && history.push(`/${path}/${item.name.toLowerCase().replace(/ /g, '-')}`)
+        setCurrentItem(item)
 
         document.title = item.name
       }
@@ -25,16 +26,19 @@ export function useList(Component) {
     const changeMode = (m) => {
       if (m === mode) return
       if (m === 'list') {
-        history.push(`/${path}/${(currentItem || items[0]).name.toLowerCase().replace(/ /g, '-')}`)
+        path && history.push(`/${path}/${(currentItem || items[0]).name.toLowerCase().replace(/ /g, '-')}`)
+      }
+      else if (m === 'add') {
+        path && history.push(`/${path}`)
       }
       // history.push(`/${path}/${m}`)
-      document.tile = `${path} - ${m}`
+      document.title = `${path} - ${m}`
       setMode(m)
     }
-    const [freeListKeys] = useKeyBindings({
+    const [freeListKeys, registerListKeys] = useKeyBindings({
       a: {
         down: () => {
-          changeMode('add')
+          enableAdd && changeMode('add')
         }
       },
       j: {
@@ -67,7 +71,7 @@ export function useList(Component) {
       }
     }, listRef.current)
 
-    const [freeWindowKeys] = useKeyBindings({
+    const [freeWindowKeys, registerWindowKeys] = useKeyBindings({
       Escape: {
         down: () => {
           changeMode('list')
@@ -77,11 +81,10 @@ export function useList(Component) {
     }, window)
 
     useEffect(() => {
+      listRef.current && listRef.current.focus()
       const item = params.id ? items[items.map(item => item.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))] : items[0]
       if (!currentItem || currentItem !== item) setListItem(item, false)
-    })
-
-    listRef.current && listRef.current.focus()
+    }, [])
 
     return <div className='flex-column max-flex-room' ref={listRef} tabIndex='0'>
       {mode === 'list' && items.map((item, i) => <Component
@@ -90,14 +93,13 @@ export function useList(Component) {
         isHovered={item === currentItem}
         mouseOptions={{
           onClick: e => {
-            debugger
             setListItem(item)
           },
           onContextMenu: e => {
             e.preventDefault()
           }
         }} />)}
-      {mode === 'add' && AddListItem && <AddListItem />}
+      {mode === 'add' && AddListItem && <AddListItem disableKeyBindings={[{ free: freeListKeys, register: registerListKeys }]} />}
     </div>
   }
-}
+} 

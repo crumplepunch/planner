@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Action, Error } from '../components'
 import { useApollo, useList } from '../hocs'
 import Log from './Log'
@@ -73,7 +73,6 @@ export const ProjectListItem = ({ name, description, _id, mouseOptions, isFocuse
   </div >
 }
 
-
 export const ProjectActions = props => {
   return <div className="container" >
     <Action label='(Esc)ape' hotkey='Escape' />
@@ -93,7 +92,9 @@ const ProjectAddField = ({ name, _id, placeholder, isHovered, isFocused, mouseOp
     className: `project container flex-column hover-text ${isHovered ? 'hovered' : ''}`,
     id: _id
   }
-
+  mouseOptions.onClick = e => {
+    e.preventDefault()
+  }
   return <div key={_id} {...props} {...mouseOptions}>
     <label>{name}</label>
     <input placeholder={placeholder} value={value} onChange={e => {
@@ -109,8 +110,15 @@ const ProjectAdd = props => {
   const formRef = useRef()
   const pointerState = useState()
   const [currentField] = pointerState
+  const { disableKeyBindings = {} } = props
 
-  return <div className='container max-flex-room'>
+  useEffect(() => {
+    disableKeyBindings.forEach(({ free }) => free && free())
+
+    return () => disableKeyBindings.forEach(({ register }) => register && register())
+  }, [])
+
+  return <div className='container max-flex-room' tabIndex='0'>
     <h1>New Project</h1>
     <form ref={formRef}>
       <ProjectFormFields {...props} pointerState={pointerState} items={[
@@ -119,7 +127,7 @@ const ProjectAdd = props => {
           placeholder: 'Untitled',
           _id: ''
         }
-      ]} />
+      ]} AddListItem={false} />
     </form>
   </div>
 }
@@ -139,7 +147,7 @@ export default useApollo(client, props => {
   const projects = data && data.projects ? data.projects : []
 
   return <div className='container flex-column max-flex-room'>
-    <ProjectList {...props} items={projects} AddListItem={ProjectAdd} />
+    <ProjectList {...props} items={projects} AddListItem={ProjectAdd} options={{ enableAdd: true }} />
     <ProjectActions />
   </div>
 })

@@ -14,9 +14,6 @@ export default props => {
       <ProjectList pointerState={pointerState} path='projects' nextRef={logsRef} />
       <div className='flex-column container' ref={logsRef} tabIndex='0'>
         <Switch>
-          <Route path='/add'>
-            {}
-          </Route>
           <Route path="/:id">
             {currentProject && <Info project={currentProject} />}
           </Route>
