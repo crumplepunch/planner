@@ -5,10 +5,8 @@ import Log from './Log'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
 import { GET_PROJECTS } from './apollo/queries'
-// import debug from 'debug'
+import AddProject from './AddProject'
 
-// const log = debug('Project:general')
-// const statelog = debug('Project:state')
 const Header = ({ name, description, expanded }) => {
   return <div className='header flex-column'>
     <h1>{name}</h1>
@@ -72,6 +70,8 @@ export const ProjectListItem = ({ name, description, _id, mouseOptions, isFocuse
     }</span>
   </div >
 }
+const ProjectList = useList(ProjectListItem)
+
 
 export const ProjectActions = props => {
   return <div className="container" >
@@ -83,54 +83,7 @@ export const ProjectActions = props => {
   </div>
 }
 
-const ProjectAddField = ({ name, _id, placeholder, isHovered, isFocused, mouseOptions }) => {
-  const [value, setValue] = useState('')
-  const props = {
-    style: {
-      color: isFocused ? '#fff' : '#cfcfcf'
-    },
-    className: `project container flex-column hover-text ${isHovered ? 'hovered' : ''}`,
-    id: _id
-  }
-  mouseOptions.onClick = e => {
-    e.preventDefault()
-  }
-  return <div key={_id} {...props} {...mouseOptions}>
-    <label>{name}</label>
-    <input placeholder={placeholder} value={value} onChange={e => {
-      setValue(e.target.value)
-    }} />
-  </div>
-}
 
-const ProjectList = useList(ProjectListItem)
-const ProjectFormFields = useList(ProjectAddField)
-
-const ProjectAdd = props => {
-  const formRef = useRef()
-  const pointerState = useState()
-  const [currentField] = pointerState
-  const { disableKeyBindings = {} } = props
-
-  useEffect(() => {
-    disableKeyBindings.forEach(({ free }) => free && free())
-
-    return () => disableKeyBindings.forEach(({ register }) => register && register())
-  }, [])
-
-  return <div className='container max-flex-room' tabIndex='0'>
-    <h1>New Project</h1>
-    <form ref={formRef}>
-      <ProjectFormFields {...props} pointerState={pointerState} items={[
-        {
-          name: 'Project Title',
-          placeholder: 'Untitled',
-          _id: ''
-        }
-      ]} AddListItem={false} />
-    </form>
-  </div>
-}
 
 export default useApollo(client, props => {
   const { data, loading, error } = useQuery(GET_PROJECTS, {
@@ -147,7 +100,7 @@ export default useApollo(client, props => {
   const projects = data && data.projects ? data.projects : []
 
   return <div className='container flex-column max-flex-room'>
-    <ProjectList {...props} items={projects} AddListItem={ProjectAdd} options={{ enableAdd: true }} />
+    <ProjectList {...props} items={projects} AddListItem={AddProject} options={{ enableAdd: true }} />
     <ProjectActions />
   </div>
 })

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Switch, Route, useHistory } from 'react-router-dom'
 
 import './index.scss'
-import ProjectList, { Info, ProjectActions } from './Project'
+import ProjectList, { Info, ProjectActions } from './ProjectList'
 
 export default props => {
   const pointerState = useState(null)
