@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Action, Error } from '../components'
 import { useApollo, useList } from '../hocs'
-import Log from './Log'
+import LogList from './LogList'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
 import { GET_PROJECTS } from './apollo/queries'
@@ -22,7 +22,7 @@ export const ProjectDescription = ({ _id, description }) => {
 }
 
 export const ProjectLog = (props) => {
-  return <Log {...props} />
+  return <LogList {...props} />
 }
 
 export const NewProjectLog = ({ _id }) => {
