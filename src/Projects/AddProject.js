@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useList } from '../hocs'
-import { Action } from '../components'
+import { Action, Error } from '../components'
+import { useMutation } from '@apollo/react-hooks'
+import { ADD_PROJECT } from './apollo/queries'
+
 
 const FormField = ({ name, _id, placeholder, isHovered, isFocused, mouseOptions, updateField }) => {
   const [value, setValue] = useState('')
@@ -37,8 +40,9 @@ const FormFields = useList(FormField)
 
 export default props => {
   const formRef = useRef()
-  const [formValues, setFormValues] = useState({})
+  const [variables, setFormValues] = useState({})
   const pointerState = useState()
+  const [addProject, { data, error, errors }] = useMutation(ADD_PROJECT)
   const { disableKeyBindings = {} } = props
 
   useEffect(() => {
@@ -48,19 +52,23 @@ export default props => {
   }, [])
 
   const updateField = args => {
-    setFormValues(Object.assign(formValues, args))
+    setFormValues(Object.assign(variables, args))
   }
+
+  if (error) return <Error error={error} />
+
+
   return <div className='container max-flex-room flex-column padding' tabIndex='0'>
     <h1>New Project</h1>
-    <form ref={formRef} name='addproject' onSubmit={e => {
-      console.log(formValues)
+    <form ref={formRef} name='addproject' onSubmit={async e => {
+      await addProject({ variables }).catch(err => console.log(err))
     }}>
       <FormFields {...props} pointerState={pointerState} items={[
         {
-          name: 'Project Title',
+          name: 'Project Name',
           placeholder: 'Untitled',
           updateField,
-          _id: 'title'
+          _id: 'name'
         },
         {
           name: 'Description',
@@ -69,7 +77,10 @@ export default props => {
           _id: 'description'
         }
       ]} AddListItem={false} />
-      <button type='submit'> Submit </button>
+
+      <Action label='Submit' mouseOptions={{
+        onClick: () => formRef.current.dispatchEvent(new Event('submit'))
+      }} />
     </form>
   </div>
 }

@@ -14,3 +14,14 @@ query ($sortField: String, $direction: Int) {
   }
 }
 `
+export const ADD_PROJECT = gql`
+  mutation AddTodo($name: String!, $description: String) {
+    addTodo(
+      name: $name,
+      description: $description
+    ) {
+      _id
+      name
+    }
+  }
+`

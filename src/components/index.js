@@ -22,7 +22,7 @@ export const Action = ({
       actionRef.current.classList.remove('active')
     }
   }
-  const [freeKeyBindings] = useKeyBindings(keyBindingOpts, ref)
+  useKeyBindings(keyBindingOpts, ref)
 
   useEffect(() => {
     return () => onMouseLeave && onMouseLeave()

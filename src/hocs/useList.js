@@ -62,7 +62,7 @@ export function useList(Component) {
         down: () => document.getElementById(currentItem._id).classList.add('active'),
         up: () => {
           document.getElementById(currentItem._id).classList.remove('active')
-          nextRef.current && nextRef.current.focus()
+          nextRef && nextRef.current && nextRef.current.focus()
         }
       },
       Control: {
@@ -71,7 +71,7 @@ export function useList(Component) {
       }
     }, listRef.current)
 
-    const [freeWindowKeys, registerWindowKeys] = useKeyBindings({
+    useKeyBindings({
       Escape: {
         down: () => {
           changeMode('list')
