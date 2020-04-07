@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Action, Error } from '../components'
 import { useApollo, useList } from '../hocs'
 import LogList from './LogList'
@@ -70,6 +70,7 @@ export const ProjectListItem = ({ name, description, _id, mouseOptions, isFocuse
     }</span>
   </div >
 }
+
 const ProjectList = useList(ProjectListItem)
 
 

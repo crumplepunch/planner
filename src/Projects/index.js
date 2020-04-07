@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react'
-import { Switch, Route, useHistory } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import './index.scss'
-import ProjectList, { Info, ProjectActions } from './ProjectList'
+import ProjectList, { Info } from './ProjectList'
 
-export default props => {
+export default () => {
   const pointerState = useState(null)
   const [currentProject] = pointerState
   const logsRef = useRef()
