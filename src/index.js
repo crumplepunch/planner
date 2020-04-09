@@ -2,7 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Planner from './Planner'
 import Projects from './Projects'
-import * as serviceWorker from './serviceWorker'
+import SandBox from './SandBox'
+import { unregister } from './serviceWorker'
 import {
   BrowserRouter as Router,
   // Link,
@@ -26,9 +27,10 @@ const Routes = () => <Router>
       <Route path='/projects/:id'><Projects /></Route>
       <Route path='/projects'><Projects /></Route>
       <Route path='/planner'><Planner /></Route>
+      <Route path='/sandbox'><SandBox /></Route>
     </Switch>
   </div>
 </Router>
 
 ReactDOM.render(<Routes />, document.getElementById('planner'))
-serviceWorker.unregister()
+unregister()

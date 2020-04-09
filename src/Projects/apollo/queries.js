@@ -15,8 +15,8 @@ query ($sortField: String, $direction: Int) {
 }
 `
 export const ADD_PROJECT = gql`
-  mutation AddTodo($name: String!, $description: String) {
-    addTodo(
+  mutation ($name: String!, $description: String) {
+    addProject(
       name: $name,
       description: $description
     ) {

@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  box-sizing: border-box;
+
+  &.centered {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.window-sized {
+  height: 100vh;
+  width: 100vw;
+}
+
+.border {
+  border: solid 1px #dedeba;
+}
+
+.border-radius {
+  border-radius: 4px;
+  min-height: 24px;
+  min-width: 24px;
+}

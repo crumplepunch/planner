@@ -1,0 +1,14 @@
+input {
+  background-color: transparent;
+  border: none;
+  border: solid 1px #dedeba;
+  font-size: 30px;
+  padding: 20px;
+  color: #fff;
+  user-select: none;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+
+  &:focus {
+    outline:none;
+  }
+}
