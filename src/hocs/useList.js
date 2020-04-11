@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { useKeyBindings } from '../hooks'
+import { Scroll } from '../components'
 
 
 export function useList(Component) {
@@ -86,20 +87,22 @@ export function useList(Component) {
       if (!currentItem || currentItem !== item) setListItem(item, false)
     }, [])
 
-    return <div className='flex-column max-flex-room' ref={listRef} tabIndex='0'>
-      {mode === 'list' && items.map((item, i) => <Component
-        key={item._id} {...item}
-        isFocused={item === currentItem}
-        isHovered={item === currentItem}
-        mouseOptions={{
-          onClick: e => {
-            setListItem(item)
-          },
-          onContextMenu: e => {
-            e.preventDefault()
-          }
-        }} />)}
+    return <Scroll >
+      <div className='flex-column max-flex-room container scroll' ref={listRef} tabIndex='0'>
+        {mode === 'list' && items.map((item, i) => <Component
+          key={item._id} {...item}
+          isFocused={item === currentItem}
+          isHovered={item === currentItem}
+          mouseOptions={{
+            onClick: e => {
+              setListItem(item)
+            },
+            onContextMenu: e => {
+              e.preventDefault()
+            }
+          }} />)}
+      </div>
       {mode === 'add' && AddListItem && <AddListItem disableKeyBindings={[{ free: freeListKeys, register: registerListKeys }]} />}
-    </div>
+    </Scroll>
   }
 } 

@@ -12,6 +12,7 @@ export default () => {
   return <div className='projects container flex-column flex-grow'>
     <div className='max-flex-room flex-row container'>
       <ProjectList pointerState={pointerState} path='projects' nextRef={logsRef} />
+
       <div className='flex-column container' ref={logsRef} tabIndex='0'>
         <Switch>
           <Route path="/:id">
