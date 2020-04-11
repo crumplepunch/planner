@@ -1,69 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import React, { useState, useEffect, useRef, useContext, useReducer } from 'react'
 import { useKeyBindings } from '../hooks'
 import { Scroll } from '../components'
 
+export const ListContext = React.createContext({
+  listItems: [],
+  currentItem: null
+})
+
+const ListActionReducerArgs = [(acc, { type, listItems, item, mode }) => {
+  if (type === 'load') {
+    listItems.forEach((item, i) => {
+      item.prev = i ? listItems[i - 1] : listItems[listItems.length - 1]
+      item.next = listItems[(i + 1) % listItems.length]
+    })
+
+    return Object.assign({}, acc, {
+      listItems: listItems || [],
+      currentItem: listItems[0] || null,
+      mode: 'list'
+    })
+  }
+  if (type === 'select') return Object.assign({}, acc, { currentItem: item })
+  if (type === 'next') return Object.assign({}, acc, { currentItem: acc.currentItem.next })
+  if (type === 'prev') return Object.assign({}, acc, { currentItem: acc.currentItem.prev })
+  if (type === 'mode') return Object.assign({}, acc, { mode })
+
+}, {
+  listItems: [],
+  currentItem: null
+}]
+
+export const useListContext = () => {
+  const [listState, listDispatch] = useReducer(...ListActionReducerArgs)
+  return [ListContext, Object.assign(listState, {
+    loadList: listItems => listDispatch({ type: 'load', listItems }),
+    select: item => listDispatch({ type: 'select', item }),
+    prev: () => listDispatch({ type: 'prev' }),
+    next: () => listDispatch({ type: 'next' }),
+    add: () => listDispatch({ type: 'mode', mode: 'add' }),
+    view: () => listDispatch({ type: 'mode', mode: 'list' }),
+    enter: () => { }
+  })]
+}
 
 export function useList(Component) {
   return function List(props) {
-    const { pointerState, items, path, nextRef, AddListItem, options = {} } = props
-    const [currentItem, setCurrentItem] = pointerState
-    const { enableAdd = false } = options
+    const {
+      listItems: items,
+      currentItem,
+      next,
+      prev,
+      select,
+      mode,
+      view,
+      enter
+    } = useContext(ListContext)
+
+    const { AddListItem } = props
     const [modifiers, setModifiers] = useState({})
     const listRef = useRef()
-    const history = useHistory()
-    const params = useParams()
-    const [mode, setMode] = useState('list')
 
-    const setListItem = (item, push = true) => {
-      if (item) {
-        push && path && history.push(`/${path}/${item.name.toLowerCase().replace(/ /g, '-')}`)
-        setCurrentItem(item)
-
-        document.title = item.name
-      }
-    }
-
-    const changeMode = (m) => {
-      if (m === mode) return
-      if (m === 'list') {
-        path && history.push(`/${path}/${(currentItem || items[0]).name.toLowerCase().replace(/ /g, '-')}`)
-      }
-      else if (m === 'add') {
-        path && history.push(`/${path}`)
-      }
-      // history.push(`/${path}/${m}`)
-      document.title = `${path} - ${m}`
-      setMode(m)
-    }
     const [freeListKeys, registerListKeys] = useKeyBindings({
-      a: {
-        down: () => {
-          enableAdd && changeMode('add')
-        }
-      },
       j: {
-        down: () => {
-          if (mode === 'list') {
-            const item = items[(items.indexOf(currentItem) + 1) % items.length]
-            setListItem(item)
-          }
-        }
+        down: next
       },
       k: {
-
-        down: () => {
-          if (mode === 'list') {
-
-            setListItem(items[(items.indexOf(currentItem) || items.length) - 1])
-          }
-        }
+        down: prev
       },
       Enter: {
         down: () => document.getElementById(currentItem._id).classList.add('active'),
         up: () => {
           document.getElementById(currentItem._id).classList.remove('active')
-          nextRef && nextRef.current && nextRef.current.focus()
+          enter()
         }
       },
       Control: {
@@ -75,16 +83,14 @@ export function useList(Component) {
     useKeyBindings({
       Escape: {
         down: () => {
-          changeMode('list')
-          listRef.current.focus()
+          view()
+          listRef.current && listRef.current.focus()
         }
       }
     }, window)
 
     useEffect(() => {
       listRef.current && listRef.current.focus()
-      const item = params.id ? items[items.map(item => item.name.replace(/-/g, '').replace(/ /g, '').toLowerCase()).indexOf(params.id.replace(/-/g, ''))] : items[0]
-      if (!currentItem || currentItem !== item) setListItem(item, false)
     }, [])
 
     return <Scroll >
@@ -95,7 +101,7 @@ export function useList(Component) {
           isHovered={item === currentItem}
           mouseOptions={{
             onClick: e => {
-              setListItem(item)
+              select(item)
             },
             onContextMenu: e => {
               e.preventDefault()

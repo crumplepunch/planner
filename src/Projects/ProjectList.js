@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Action, Error } from '../components'
-import { useApollo, useList } from '../hocs'
+import { useApollo, useList, ListContext } from '../hocs'
 import LogList from './LogList'
 import { useQuery } from '@apollo/react-hooks'
 import { client } from './apollo/index'
@@ -84,8 +84,6 @@ export const ProjectActions = props => {
   </div>
 }
 
-
-
 export default useApollo(client, props => {
   const { data, loading, error } = useQuery(GET_PROJECTS, {
     variables: {
@@ -94,14 +92,21 @@ export default useApollo(client, props => {
     }
   })
 
+  const { loadList, listItems } = useContext(ListContext)
+  const projects = data && data.projects ? data.projects : []
+
+  useEffect(() => {
+    if (projects.length && !listItems.length) {
+      loadList(projects)
+    }
+  })
+
   if (loading) return <h1>Loading</h1>
   if (error) return <Error error={error} />
   if (!data) return <h1> 404 Not found</h1>
 
-  const projects = data && data.projects ? data.projects : []
-
   return <div className='container flex-column max-flex-room'>
-    <ProjectList {...props} items={projects} AddListItem={AddProject} options={{ enableAdd: true }} />
+    <ProjectList {...props} AddListItem={AddProject} options={{ enableAdd: true }} />
     <ProjectActions />
   </div>
 })
