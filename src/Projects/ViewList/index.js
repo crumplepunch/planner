@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useRef, useCallback } from 'react'
 import { useHistory } from 'react-router'
 
 import { useQuery } from '@apollo/react-hooks'
@@ -45,7 +45,6 @@ export const Info = ({ project }) => {
 }
 
 export const ProjectActions = props => {
-  useHistory()
   return <div className="container" >
     <Action label='(Esc)ape' hotkey='Escape' />
     <Action label='(T)rack' hotkey='t' />
@@ -67,8 +66,13 @@ export default useApollo(client, props => {
   })
 
   const { loadList } = ops
-  const { items } = listState
+  const { items, currentItem } = listState
 
+  const history = useHistory()
+
+  ops.enter = useCallback(() => {
+    history.push(`/projects/${currentItem.name.toLowerCase().replace(/ /g, '-').replace(/\./g, '-')}`)
+  }, [currentItem, history])
   useMemo(() => {
     const projects = data && data.projects ? data.projects : []
 
@@ -82,6 +86,7 @@ export default useApollo(client, props => {
   if (loading) return <h1>Loading</h1>
   if (error) return <Error error={error} />
   if (!data) return <h1> 404 Not found</h1>
+
 
   return <div className='max-flex-room flex-row container'>
     <ListContext.Provider value={{
