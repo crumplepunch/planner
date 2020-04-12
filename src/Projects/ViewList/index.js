@@ -72,6 +72,7 @@ export default useApollo(client, props => {
 
   ops.enter = useCallback(() => {
     history.push(`/projects/${currentItem.name.toLowerCase().replace(/ /g, '-').replace(/\./g, '-')}`)
+    document.title = currentItem.name
   }, [currentItem, history])
   useMemo(() => {
     const projects = data && data.projects ? data.projects : []
