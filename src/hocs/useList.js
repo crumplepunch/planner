@@ -6,34 +6,42 @@ import { Scroll } from '../components'
 
 export function useList(Component) {
   return function List(props) {
+
     const {
-      items,
-      currentItem,
-      next,
-      prev,
-      select,
-      mode,
-      view
+      listState: {
+        items,
+        currentItem
+      },
+      ops: {
+        next,
+        prev,
+        select,
+        view,
+        enter = () => { }
+      }
     } = useContext(ListContext)
 
-    const { AddListItem } = props
     const [modifiers, setModifiers] = useState({})
     const listRef = useRef()
 
-    const [freeListKeys, registerListKeys] = useKeyBindings({
+    const [freeNav, registerNav] = useKeyBindings({
+      Enter: {
+        down: () => document.getElementById(currentItem._id).classList.add('active'),
+        up: () => {
+          document.getElementById(currentItem._id).classList.remove('active')
+          freeNav()
+          enter()
+        }
+      },
       j: {
         down: next
       },
       k: {
         down: prev
-      },
-      Enter: {
-        down: () => document.getElementById(currentItem._id).classList.add('active'),
-        up: () => {
-          document.getElementById(currentItem._id).classList.remove('active')
-          // enter()
-        }
-      },
+      }
+    }, listRef.current)
+
+    useKeyBindings({
       Control: {
         down: () => setModifiers(Object.assign(modifiers, { ctrl: true })),
         up: () => setModifiers(Object.assign(modifiers, { ctrl: false }))
@@ -44,6 +52,7 @@ export function useList(Component) {
       Escape: {
         down: () => {
           view()
+          registerNav()
           listRef.current && listRef.current.focus()
         }
       }
@@ -55,8 +64,9 @@ export function useList(Component) {
 
     return <Scroll >
       <div className='flex-column max-flex-room container scroll' ref={listRef} tabIndex='0'>
-        {mode === 'list' && items.map((item, i) => <Component
+        {items.map((item, i) => <Component
           key={item._id} {...item}
+          ordered={i}
           isFocused={item === currentItem}
           isHovered={item === currentItem}
           mouseOptions={{
@@ -68,7 +78,6 @@ export function useList(Component) {
             }
           }} />)}
       </div>
-      {mode === 'add' && AddListItem && <AddListItem disableKeyBindings={[{ free: freeListKeys, register: registerListKeys }]} />}
     </Scroll>
   }
 } 

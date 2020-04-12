@@ -4,17 +4,18 @@ import {
   Switch,
   Route
 } from 'react-router-dom'
-import ViewProjects from './Lists'
+import ViewProjects from './ViewList'
 import StartProject from './Start'
 import './style.scss'
+import { START, LIST } from './paths'
 
 export default () => <div className='projects container flex-column flex-grow'>
   <Router>
     <Switch>
-      <Route path='/start'>
+      <Route path={START}>
         <StartProject />
       </Route>
-      <Route path='/'>
+      <Route path={LIST}>
         <ViewProjects />
       </Route>
     </Switch>

@@ -26,7 +26,8 @@ const defaultVal = {
   items: [],
   currentItem: null
 }
-export const useListContext = () => {
+export const useListContext = (items = []) => {
+  if (items) { }
   const [listState, dispatch] = useReducer(reducer, defaultVal)
 
   const add = useCallback(() => dispatch({ type: 'mode', mode: 'add' }), [dispatch])
@@ -36,7 +37,7 @@ export const useListContext = () => {
   const select = useCallback(item => dispatch({ type: 'select', item }), [dispatch])
   const view = useCallback(() => dispatch({ type: 'mode', mode: 'list' }), [dispatch])
 
-  return [ListContext, Object.assign(listState, {
+  return [ListContext, listState, {
     loadList, select, prev, next, add, view
-  })]
+  }]
 }

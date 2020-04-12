@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useRef } from 'react'
-import { Action, Error } from '../../components'
-import { useApollo, useList } from '../../hocs'
-import { useListContext } from '../../hooks'
+import { useHistory } from 'react-router'
 
 import { useQuery } from '@apollo/react-hooks'
-import { client } from '../apollo/index'
-import { GET_PROJECTS } from '../apollo/queries'
 
 import Log from './Log'
 import Project from './Project'
+import { START } from '../paths'
+
+import { client, GET_PROJECTS } from '../apollo'
+import { useApollo, useList } from '../../hocs'
+import { useListContext } from '../../hooks'
+import { Action, Error } from '../../components'
 
 export const ProjectDescription = ({ _id, description }) => {
   return <div>
@@ -43,10 +45,11 @@ export const Info = ({ project }) => {
 }
 
 export const ProjectActions = props => {
+  useHistory()
   return <div className="container" >
     <Action label='(Esc)ape' hotkey='Escape' />
     <Action label='(T)rack' hotkey='t' />
-    <Action label='(A)dd' hotkey='a' to='/new' />
+    <Action label='(A)dd' hotkey='a' to={START} />
     <Action label='(V)iew' hotkey='v' />
     <Action label='(E)dit' hotkey='e' />
   </div>
@@ -55,7 +58,7 @@ export const ProjectActions = props => {
 const ProjectList = useList(Project)
 
 export default useApollo(client, props => {
-  const [ListContext, listState] = useListContext()
+  const [ListContext, listState, ops] = useListContext()
   const { data, loading, error } = useQuery(GET_PROJECTS, {
     variables: {
       sortField: 'name',
@@ -63,7 +66,9 @@ export default useApollo(client, props => {
     }
   })
 
-  const { items, loadList } = listState
+  const { loadList } = ops
+  const { items } = listState
+
   useMemo(() => {
     const projects = data && data.projects ? data.projects : []
 
@@ -79,7 +84,10 @@ export default useApollo(client, props => {
   if (!data) return <h1> 404 Not found</h1>
 
   return <div className='max-flex-room flex-row container'>
-    <ListContext.Provider value={listState}>
+    <ListContext.Provider value={{
+      listState,
+      ops
+    }}>
       <div className='container flex-column max-flex-room'>
         <ProjectList {...props} />
         <ProjectActions />

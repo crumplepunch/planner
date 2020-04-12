@@ -7,7 +7,7 @@ const Header = ({ name, description, expanded }) => {
   </div>
 }
 
-export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) => {
+export default ({ name, description, _id, mouseOptions, isFocused, isHovered, ordered }) => {
   // const [showMenu, setMenu] = useState(false)
   const props = {
     style: {
@@ -18,7 +18,7 @@ export default ({ name, description, _id, mouseOptions, isFocused, isHovered }) 
   }
 
   return <div {...props} {...mouseOptions}>
-    <span>{
+    <span>{ordered}. {
       _id
         ? <Header name={name} description={description} expanded={isFocused || isHovered} />
         : <Header name={'+'} description={'Create a new project'} expanded={isFocused} />

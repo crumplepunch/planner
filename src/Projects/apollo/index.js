@@ -11,4 +11,4 @@ export const client = new ApolloClient({
   cache,
   link
 })
-log('done')
+export * from './queries'
