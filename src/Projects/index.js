@@ -1,23 +1,22 @@
-import React, { useState, useRef } from 'react'
-import { useListContext } from '../hocs'
-import './index.scss'
-import ProjectList, { Info } from './ProjectList'
+import React from 'react'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from 'react-router-dom'
+import ViewProjects from './Lists'
+import StartProject from './Start'
+import './style.scss'
 
-export default () => {
-  const pointerState = useState(null)
-  const logsRef = useRef()
-
-  const [ListContext, listState] = useListContext()
-
-  return <div className='projects container flex-column flex-grow'>
-    <div className='max-flex-room flex-row container'>
-      <ListContext.Provider value={listState}>
-        <ProjectList pointerState={pointerState} />
-      </ListContext.Provider>
-
-      <div className='flex-column container' ref={logsRef} tabIndex='0'>
-        {listState.currentItem && <Info project={listState.currentItem} />}
-      </div >
-    </div>
-  </div >
-}
+export default () => <div className='projects container flex-column flex-grow'>
+  <Router>
+    <Switch>
+      <Route path='/start'>
+        <StartProject />
+      </Route>
+      <Route path='/'>
+        <ViewProjects />
+      </Route>
+    </Switch>
+  </Router>
+</div >

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useList } from '../hocs'
-import { Action, Error } from '../components'
+import { useList } from '../../hocs'
+import { Action, Error } from '../../components'
 import { useMutation } from '@apollo/react-hooks'
-import { ADD_PROJECT } from './apollo/queries'
+import { ADD_PROJECT } from '../apollo/queries'
 
 
 const FormField = ({ name, _id, placeholder, isHovered, isFocused, mouseOptions, updateField }) => {
@@ -61,6 +61,7 @@ export default props => {
   return <div className='container max-flex-room flex-column padding' tabIndex='0'>
     <h1>New Project</h1>
     <form ref={formRef} name='addproject' onSubmit={async e => {
+      e.preventDefault()
       await addProject({ variables }).catch(err => console.log(err))
     }}>
       <FormFields {...props} pointerState={pointerState} items={[

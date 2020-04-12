@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Planner from './Planner'
 import Projects from './Projects'
 import SandBox from './SandBox'
 import { unregister } from './serviceWorker'
@@ -26,7 +25,7 @@ const Routes = () => <Router>
     <Switch>
       <Route path='/projects/:id'><Projects /></Route>
       <Route path='/projects'><Projects /></Route>
-      <Route path='/planner'><Planner /></Route>
+
       <Route path='/sandbox'><SandBox /></Route>
     </Switch>
   </div>
