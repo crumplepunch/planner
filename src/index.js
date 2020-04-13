@@ -9,7 +9,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom'
-import './index.scss'
+import './style.scss'
 
 // const Nav = () => <nav>
 //   <div className='container navigation justify-space max-width'>

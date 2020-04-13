@@ -18,7 +18,6 @@ const FormField = ({ name, _id, placeholder, isHovered, isFocused, mouseOptions,
 
   const inputRef = useRef()
 
-
   mouseOptions.onClick = e => {
     e.preventDefault()
     inputRef.current.focus()

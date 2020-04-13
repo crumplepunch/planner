@@ -1,15 +1,15 @@
 import React, { useState, useMemo, useRef, useCallback } from 'react'
-import { useHistory } from 'react-router'
 
 import { useQuery } from '@apollo/react-hooks'
 
 import Log from './Log'
 import Project from './Project'
 import { START } from '../paths'
+import { useHistory } from 'react-router-dom'
 
 import { client, GET_PROJECTS } from '../apollo'
 import { useApollo, useList } from '../../hocs'
-import { useListContext } from '../../hooks'
+import { useListContext, useProject } from '../../hooks'
 import { Action, Error } from '../../components'
 
 export const ProjectDescription = ({ _id, description }) => {
@@ -67,13 +67,14 @@ export default useApollo(client, props => {
 
   const { loadList } = ops
   const { items, currentItem } = listState
-
+  const setProject = useProject()[1]
   const history = useHistory()
 
   ops.enter = useCallback(() => {
     history.push(`/projects/${currentItem.name.toLowerCase().replace(/ /g, '-').replace(/\./g, '-')}`)
-    document.title = currentItem.name
-  }, [currentItem, history])
+    setProject(currentItem)
+  }, [currentItem, setProject, history])
+
   useMemo(() => {
     const projects = data && data.projects ? data.projects : []
 

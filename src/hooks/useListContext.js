@@ -22,12 +22,14 @@ const reducer = (acc, { type, items, item, mode }) => {
   console.log(`Unknown dispatch: ${type}`)
   return
 }
+
 const defaultVal = {
   items: [],
   currentItem: null
 }
-export const useListContext = (items = []) => {
-  if (items) { }
+
+export const useListContext = () => {
+
   const [listState, dispatch] = useReducer(reducer, defaultVal)
 
   const add = useCallback(() => dispatch({ type: 'mode', mode: 'add' }), [dispatch])
