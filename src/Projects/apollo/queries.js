@@ -25,3 +25,19 @@ export const ADD_PROJECT = gql`
     }
   }
 `
+
+export const GET_PROJECT = gql`
+query ($name: String, $id: ID) {
+  project(name: $name, id: $id) {
+    _id
+    name 
+    description
+    logs {
+      project
+      markdown
+      date
+      name
+    }
+  }
+} 
+`

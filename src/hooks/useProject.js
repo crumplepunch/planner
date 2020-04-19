@@ -1,5 +1,4 @@
 import { useContext, useCallback, useReducer } from 'react'
-import { useHistory } from 'react-router-dom'
 import { ProjectContext } from '../contexts'
 
 const reducer = (acc, { type, project }) => {
@@ -19,8 +18,8 @@ export const useProject = () => {
   return context
 }
 
-export const useProjectContext = () => {
-  const [state, dispatch] = useReducer(reducer, {})
+export const useProjectContext = (project) => {
+  const [state, dispatch] = useReducer(reducer, { project })
   const setProject = useCallback(project => {
     document.title = project.name
     dispatch({
@@ -29,5 +28,5 @@ export const useProjectContext = () => {
     })
   }, [dispatch])
 
-  return [state, setProject]
+  return [state, setProject, ProjectContext]
 }

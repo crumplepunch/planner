@@ -71,7 +71,7 @@ export default useApollo(client, props => {
   const history = useHistory()
 
   ops.enter = useCallback(() => {
-    history.push(`/projects/${currentItem.name.toLowerCase().replace(/ /g, '-').replace(/\./g, '-')}`)
+    history.push(`/projects/${currentItem._id}`)
     setProject(currentItem)
   }, [currentItem, setProject, history])
 
